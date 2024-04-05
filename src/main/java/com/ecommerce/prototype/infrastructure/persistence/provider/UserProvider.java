@@ -28,13 +28,8 @@ public class UserProvider implements UserRepository {
     @Override
     public Optional<User> save(User user) {
 
-        try {
-            Userdb userdb = MapperUser.toUserModel(user);
-            userJPARepository.save(userdb);
-            return Optional.of(user);
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
+       Userdb userdb = MapperUser.toUserModel(user);
+       return Optional.ofNullable(MapperUser.toUserDomain(userJPARepository.save(userdb)));
     }
 
     /**

@@ -21,7 +21,7 @@ public class MapperPayment {
         payment.setAmount(paymentdb.getAmount());
         payment.setPaymentMethod(paymentdb.getPaymentMethod());
         payment.setPaymentStatus(paymentdb.getPaymentStatus());
-        payment.setOrder(MapperOrder.mapToDomain(paymentdb.getOrder()));
+       // payment.setOrder(MapperOrder.mapToDomain(paymentdb.getOrder()));
 
         return payment;
     }
@@ -42,7 +42,7 @@ public class MapperPayment {
         paymentdb.setAmount(payment.getAmount());
         paymentdb.setPaymentMethod(payment.getPaymentMethod());
         paymentdb.setPaymentStatus(payment.getPaymentStatus());
-        paymentdb.setOrder(MapperOrder.mapToModel(payment.getOrder()));
+     //   paymentdb.setOrder(MapperOrder.mapToModel(payment.getOrder()));
 
         return paymentdb;
     }

@@ -20,6 +20,7 @@ public class Orderdb {
     private Userdb user;
     @OneToOne(mappedBy = "order")
     private OrderDetaildb orderDetail;
-    @OneToOne(mappedBy = "order")
+    @OneToOne
     private Paymentdb paymentdb;
+
 }

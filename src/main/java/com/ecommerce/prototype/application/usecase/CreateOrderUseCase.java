@@ -1,13 +1,12 @@
 package com.ecommerce.prototype.application.usecase;
 
-import com.ecommerce.prototype.application.domain.Cart;
-import com.ecommerce.prototype.application.domain.Order;
-import com.ecommerce.prototype.application.domain.Product;
-import com.ecommerce.prototype.application.domain.User;
+import com.ecommerce.prototype.application.domain.*;
 import com.ecommerce.prototype.application.usecase.repository.OrderRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperUser;
 import com.ecommerce.prototype.infrastructure.persistence.provider.UserProvider;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +17,8 @@ public class CreateOrderUseCase {
 
     private OrderRepository orderRepository;
     private UserProvider userProvider;
+    private static final Logger logger = LoggerFactory.getLogger(CreateOrderUseCase.class);
+
 
     /**
      * Creates an order based on the provided cart.
@@ -34,6 +35,9 @@ public class CreateOrderUseCase {
         order.setTotalAmount(totalAmount);
         order.setOrderStatus("PENDING");
         order.setUser(user);
+//        Payment payment = new Payment();
+//        payment.setPaymentStatus("PENDING");
+        logger.info("begin create order in repository");
         return orderRepository.createOrder(order, userId);
     }
 

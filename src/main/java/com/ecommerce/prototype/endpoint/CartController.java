@@ -40,8 +40,8 @@ public class CartController {
             Cart cart = createCartUseCase.createCart(cartRequest.getUserId())
                     .orElseThrow(() -> new RuntimeException("Error creating the cart"));
             return ResponseEntity.status(HttpStatus.CREATED).body(cart);
-        } catch (CartPendingPaymentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There is a cart pending payment for this user");
+        }  catch (UserDisabledException | CartPendingPaymentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Cart cannot be created: " + e.getMessage());
         } catch (CartStateException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {

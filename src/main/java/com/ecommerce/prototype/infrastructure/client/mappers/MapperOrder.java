@@ -20,6 +20,7 @@ public class MapperOrder {
         order.setTotalAmount(orderdb.getTotalAmount());
         order.setOrderStatus(orderdb.getOrderStatus());
         order.setUser(MapperUser.toUserDomain(orderdb.getUser()));
+       // order.setPayment(orderdb.getPaymentdb() != null ? MapperPayment.mapToDomain(orderdb.getPaymentdb()) : null);
 
         return order;
     }
@@ -39,6 +40,7 @@ public class MapperOrder {
         orderdb.setTotalAmount(order.getTotalAmount());
         orderdb.setOrderStatus(order.getOrderStatus());
         orderdb.setUser(MapperUser.toUserModel(order.getUser()));
+       // orderdb.setPaymentdb(order.getPayment() != null ? MapperPayment.mapToModel(order.getPayment()) : null);
         return orderdb;
     }
 }

@@ -4,10 +4,15 @@ import com.ecommerce.prototype.application.domain.Order;
 import com.ecommerce.prototype.application.domain.Payment;
 import com.ecommerce.prototype.application.usecase.exception.OrderNotFoundException;
 import com.ecommerce.prototype.application.usecase.repository.PaymentRepository;
+import com.ecommerce.prototype.infrastructure.client.mappers.MapperOrder;
 import com.ecommerce.prototype.infrastructure.client.response.TransactionResponse;
+import com.ecommerce.prototype.infrastructure.persistence.modeldb.Orderdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Paymentdb;
 import com.ecommerce.prototype.infrastructure.persistence.provider.OrderProvider;
+import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.OrderJPARepository;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -39,7 +44,7 @@ public class CreatePaymentUseCase {
         payment.setAmount(order.getTotalAmount());
         payment.setPaymentMethod(paymentMethod);
         payment.setPaymentStatus(transactionResponse.getState());
-        payment.setOrder(order);
+       // payment.setOrder(order);
 
         return paymentRepository.save(payment);
     }

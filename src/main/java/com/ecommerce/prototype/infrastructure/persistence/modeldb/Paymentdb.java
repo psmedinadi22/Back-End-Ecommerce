@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @Getter
 @Setter
 @Entity
@@ -18,6 +19,10 @@ public class Paymentdb {
     private double amount;
     private String paymentMethod;
     private String paymentStatus;
-    @OneToOne
-    private  Orderdb order;
+//    @JsonIgnore
+//    @OneToOne
+//    @JoinColumn(name = "order_id")
+//    private Orderdb order;
+
+
 }

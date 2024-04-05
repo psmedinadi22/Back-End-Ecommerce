@@ -8,6 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 public class TokenizedCard {
+
     private String creditCardTokenId;
     private String name;
     private String payerId;

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Date;
 @Getter
@@ -32,6 +33,7 @@ public class OrderDetaildb {
     private UserShippingAddress shippingAddress;
     private UserBillingAddress billingAddress;
     @OneToOne
+    @JsonIgnore
     private Orderdb order;
     @OneToOne
     private Cartdb cart;

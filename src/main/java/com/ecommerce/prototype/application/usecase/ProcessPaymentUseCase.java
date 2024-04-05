@@ -4,19 +4,17 @@ import com.ecommerce.prototype.application.domain.*;
 import com.ecommerce.prototype.application.usecase.exception.*;
 import com.ecommerce.prototype.application.usecase.repository.*;
 import com.ecommerce.prototype.infrastructure.client.PaymentService;
-import com.ecommerce.prototype.infrastructure.client.mappers.MapperCart;
-import com.ecommerce.prototype.infrastructure.client.mappers.MapperOrderDetail;
-import com.ecommerce.prototype.infrastructure.client.mappers.MapperProduct;
-import com.ecommerce.prototype.infrastructure.client.mappers.MapperUser;
+import com.ecommerce.prototype.infrastructure.client.mappers.*;
 import com.ecommerce.prototype.infrastructure.client.request.PaymentRequest;
 import com.ecommerce.prototype.infrastructure.client.response.PaymentResponse;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Productdb;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.TokenizedCarddb;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
+import com.ecommerce.prototype.infrastructure.persistence.modeldb.*;
+import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.OrderJPARepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @AllArgsConstructor
@@ -31,20 +29,40 @@ public class ProcessPaymentUseCase {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final CreatePaymentUseCase createPaymentUseCase;
+    private final UpdateProductQuantityUseCase updateProductQuantityUseCase;
+    private final OrderJPARepository orderJPARepository;
+    private static final Logger logger = LoggerFactory.getLogger(ProcessPaymentUseCase.class);
 
     public PaymentResponse processPayment(PaymentRequest paymentRequest) throws JsonProcessingException {
 
         User user = retrieveUser(paymentRequest.getUserId());
         TokenizedCarddb tokenizedCard = verifyTokenizedCard(paymentRequest.getTokenizedCardId(), paymentRequest.getUserId());
         Cart cart = retrieveCart(paymentRequest.getCartId(), paymentRequest.getUserId());
+        logger.info("begin create order");
         Order order = createOrder(cart, user);
-
+        logger.info("begin response");
         PaymentResponse response = processPayment(user,(int) order.getTotalAmount(),
                 tokenizedCard.getCreditCardTokenId(),
                 paymentRequest);
+        logger.info("made response");
+        response.setOrderId(order.getOrderID());
+        logger.info("set orderId to response");
         OrderDetail orderDetail = createOrderDetail(order, user, cart, paymentRequest.getPaymentMethod());
-        createPaymentUseCase.createPayment(response.getTransactionResponse(), order.getOrderID(), paymentRequest.getPaymentMethod());
+        response.setOrderDetailId(orderDetail.getOrderDetailId());
+        logger.info("set orderdetailId to response");
+        Paymentdb paymentdb = createPaymentUseCase.createPayment(response.getTransactionResponse(), order.getOrderID(), paymentRequest.getPaymentMethod());
+        logger.info("created payment");
+        response.setPaymentId(paymentdb.getPaymentID());
+//        Payment payment = MapperPayment.mapToDomain(paymentdb);
+        logger.info("payment mapped");
+//        order.setPayment(payment);
+//        logger.info("begin saving payment in ord");
+//        Orderdb orderdb = MapperOrder.mapToModel(order);
+//        logger.info("begin saving payment in ord, mapper");
+//        orderJPARepository.save(orderdb);
+        logger.info("set PaymnetId to response");
         updateStatus(order, cart, orderDetail, response);
+
         return response;
     }
 
@@ -98,6 +116,9 @@ public class ProcessPaymentUseCase {
     private User retrieveUser(Integer userId) {
         Userdb userdb = userRepository.findById(userId);
         if (userdb!= null) {
+            if (userdb.getDeleted()) {
+                throw new UserDisabledException("The user with ID: " + userId + " is disabled.");
+            }
             return MapperUser.toUserDomain(userdb);
         } else {
             throw new UserNoExistException("User not found with ID: " + userId);
@@ -152,7 +173,7 @@ public class ProcessPaymentUseCase {
         order.setOrderStatus(purchaseStatus);
         cart.setStatus(purchaseStatus.equals("SUCCESS") ? "PAID" : purchaseStatus.equals("DECLINED") ? "DECLINED" : purchaseStatus);
 
-        if (purchaseStatus.equals("SUCCESS")) {
+        if (purchaseStatus.equals("APPROVED")) {
             updateInventory(cart);
         }
 
@@ -185,7 +206,7 @@ public class ProcessPaymentUseCase {
             if (updatedQuantity < 0) {
                 throw new InsufficientProductQuantityException("Insufficient quantity for product with ID: " + product.getProductId());
             }
-            productdb.setQuantity(updatedQuantity);
+            updateProductQuantityUseCase.updateProductQuantity(product.getProductId(), updatedQuantity);
             productRepository.save(MapperProduct.toProductDomain(productdb));
         }
     }

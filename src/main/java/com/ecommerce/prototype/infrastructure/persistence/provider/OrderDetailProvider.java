@@ -50,8 +50,8 @@ public class OrderDetailProvider implements OrderDetailRepository {
     @Override
     public Optional<OrderDetail> findById(Integer orderDetailId) {
 
-        OrderDetaildb orderDetaildb = orderDetailJPARepository.findById(orderDetailId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found with ID: " + orderDetailId));
+        OrderDetaildb orderDetaildb = orderDetailJPARepository.findByOrderDetailId(orderDetailId)
+                .orElseThrow(() -> new OrderNotFoundException("Order Detail not found with ID: " + orderDetailId));
         return Optional.of(MapperOrderDetail.mapToDomain(orderDetaildb));
     }
 

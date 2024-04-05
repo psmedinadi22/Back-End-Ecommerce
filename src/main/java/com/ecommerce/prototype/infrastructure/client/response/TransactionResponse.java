@@ -15,6 +15,9 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TransactionResponse {
 
+
+
+
     private long orderId;
     private String transactionId;
     private String state;

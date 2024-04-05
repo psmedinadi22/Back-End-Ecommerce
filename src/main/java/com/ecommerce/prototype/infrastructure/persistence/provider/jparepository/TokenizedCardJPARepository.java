@@ -1,9 +1,6 @@
 package com.ecommerce.prototype.infrastructure.persistence.provider.jparepository;
 
-import com.ecommerce.prototype.application.domain.User;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.TokenizedCarddb;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

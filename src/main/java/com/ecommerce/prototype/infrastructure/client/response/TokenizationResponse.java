@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TokenizationResponse {
 
+    private Integer tokenizationResponseId;
     @JsonProperty("code")
     private String code;
     @JsonProperty("creditCardToken")

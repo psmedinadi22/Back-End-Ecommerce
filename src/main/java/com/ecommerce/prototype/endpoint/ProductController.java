@@ -5,6 +5,7 @@ import com.ecommerce.prototype.application.usecase.CreateProductUseCase;
 import com.ecommerce.prototype.application.usecase.DeleteProductUseCase;
 import com.ecommerce.prototype.application.usecase.GetProductUseCase;
 import com.ecommerce.prototype.application.usecase.UpdateProductQuantityUseCase;
+import com.ecommerce.prototype.application.usecase.exception.InsufficientProductQuantityException;
 import com.ecommerce.prototype.application.usecase.exception.ProductAlreayExistException;
 import com.ecommerce.prototype.application.usecase.exception.ProductNotFoundException;
 import com.ecommerce.prototype.application.usecase.repository.ProductRepository;
@@ -46,6 +47,7 @@ public class ProductController {
         try {
 
             Product product = createProductUseCase.createProduct(MapperProduct.toProductDomain(productRequest));
+            productBuilder.withProductId(product.getProductId());
             productBuilder.withProductName(product.getProductName());
             productBuilder.withDescription(product.getDescription());
             productBuilder.withImage(product.getImage());
@@ -55,7 +57,7 @@ public class ProductController {
 
             return new ResponseEntity<>(productBuilder.build(), HttpStatus.CREATED);
 
-        } catch (IllegalArgumentException | ProductAlreayExistException e) {
+        } catch (IllegalArgumentException | ProductAlreayExistException | InsufficientProductQuantityException e) {
             productBuilder.withError(e.getMessage());
             return new ResponseEntity<>(productBuilder.build(), HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {

@@ -48,7 +48,8 @@ public class UserController {
             User user = createUserUseCase.createUser(mapperUser)
                     .orElseThrow(() -> new RuntimeException("Error saving user"));
 
-            userBuilder.withName(user.getName())
+            userBuilder.withUserId(user.getUserId())
+                    .withName(user.getName())
                     .withEmail(user.getEmail())
                     .withPassword(user.getPassword())
                     .withPhoneNumber(user.getPhoneNumber())

@@ -14,5 +14,5 @@ public class Payment {
     private double amount;
     private String paymentMethod;
     private String paymentStatus;
-    private  Order order;
+  //  private  Order order;
 }

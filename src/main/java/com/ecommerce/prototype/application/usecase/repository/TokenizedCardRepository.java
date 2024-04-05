@@ -9,11 +9,11 @@ import java.util.Optional;
 
 public interface TokenizedCardRepository {
 
-    Optional<TokenizationResponse> save(Optional<TokenizationResponse> tokenizedCard);
+
     Optional<TokenizedCarddb> findById(Integer tokenizedCardId);
 
 
-    Optional<TokenizationResponse> createTokenizedCard(TokenizationResponse tokenizedCard, Integer userId);
+    Optional<TokenizedCarddb> createTokenizedCard(TokenizationResponse tokenizedCard, Integer userId);
 
     List<TokenizedCard> findByUserId(Integer userId);
 }

@@ -1,12 +1,15 @@
 package com.ecommerce.prototype.infrastructure.persistence.provider;
 
 import com.ecommerce.prototype.application.domain.Order;
+import com.ecommerce.prototype.application.usecase.ProcessPaymentUseCase;
 import com.ecommerce.prototype.application.usecase.exception.OrderNotFoundException;
 import com.ecommerce.prototype.application.usecase.repository.OrderRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperOrder;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Orderdb;
 import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.OrderJPARepository;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,6 +21,7 @@ public class OrderProvider implements OrderRepository {
 
     private final OrderJPARepository orderJPARepository;
     private final UserProvider userProvider;
+    private static final Logger logger = LoggerFactory.getLogger(OrderProvider.class);
 
     /**
      * Saves an order.
@@ -58,9 +62,13 @@ public class OrderProvider implements OrderRepository {
     @Override
     public Optional<Order> getOrder(int orderId) {
 
-        Optional<Orderdb> orderdbOptional = orderJPARepository.findById(orderId);
+        Optional<Orderdb> orderdbOptional = orderJPARepository.findByOrderID(orderId);
+        logger.info("orderoptional:" + orderdbOptional);
         Orderdb orderdb = orderdbOptional.orElseThrow(() -> new RuntimeException("Order not found"));
-        return Optional.of(MapperOrder.mapToDomain(orderdb));
+        logger.info("orederDb"+orderdb);
+        Order orderSaved = MapperOrder.mapToDomain(orderdb);
+        logger.info("oreder saved: {} "+orderSaved);
+        return Optional.of(orderSaved);
     }
 
     /**
@@ -71,6 +79,7 @@ public class OrderProvider implements OrderRepository {
      */
     @Override
     public List<Orderdb> findByUserId(Integer userId) {
+
         return orderJPARepository.findByUserId(userId);
     }
 
@@ -83,9 +92,13 @@ public class OrderProvider implements OrderRepository {
      */
     @Override
     public Order createOrder(Order order, Integer userId) {
+        logger.info("begin Mappper");
         Orderdb orderdb = MapperOrder.mapToModel(order);
+        logger.info("finish mapper");
         orderdb.setUser(userProvider.findById(userId));
+        logger.info("begin saving jpa");
         orderdb = orderJPARepository.save(orderdb);
+        logger.info("ORDER SAVE");
         return MapperOrder.mapToDomain(orderdb);
     }
 

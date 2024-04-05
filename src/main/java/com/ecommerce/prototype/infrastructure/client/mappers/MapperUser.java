@@ -47,6 +47,11 @@ public class MapperUser {
                 .identificationNumber(userdb.getIdentificationNumber())
                 .shippingAddress(userdb.getShippingAddress())
                 .billingAddress(userdb.getBillingAddress())
+                .admin(userdb.getAdmin())
+                .deleted(userdb.getDeleted())
+                .tokenizedCards(userdb.getTokenizedCards())
+                .orders(userdb.getOrders())
+                .cards(userdb.getCarts())
                 .build();
     }
 
@@ -63,12 +68,16 @@ public class MapperUser {
         userdb.setUserId(user.getUserId());
         userdb.setName(user.getName());
         userdb.setEmail(user.getEmail().getAddress());
-        userdb.setPassword(userdb.getPassword());
+        userdb.setPassword(user.getPassword().getValue());
         userdb.setPhoneNumber(user.getPhoneNumber());
         userdb.setIdentificationType(user.getIdentificationType());
         userdb.setIdentificationNumber(user.getIdentificationNumber());
         userdb.setShippingAddress(user.getShippingAddress());
         userdb.setBillingAddress(user.getBillingAddress());
+        userdb.setAdmin(user.getAdmin());
+        userdb.setDeleted(user.getDeleted());
+        userdb.setTokenizedCards(user.getTokenizedCards());
+        userdb.setCarts(user.getCards());
         return userdb;
     }
 

@@ -17,4 +17,7 @@ public class Order {
     private double totalAmount;
     private String orderStatus;
     private User user;
+  //  private Payment payment;
+
+
 }

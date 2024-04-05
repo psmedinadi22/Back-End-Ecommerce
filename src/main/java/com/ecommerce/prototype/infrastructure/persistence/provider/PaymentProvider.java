@@ -8,6 +8,8 @@ import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @AllArgsConstructor
 public class PaymentProvider implements PaymentRepository {
@@ -18,5 +20,12 @@ public class PaymentProvider implements PaymentRepository {
     public Paymentdb save(Payment payment) {
 
         return paymentJPARepository.save(MapperPayment.mapToModel(payment));
+    }
+
+    @Override
+    public Optional<Payment> getPayment(Integer paymentId) {
+        Paymentdb paymentdb = paymentJPARepository.findByPaymentID(paymentId)
+                .orElseThrow(() -> new RuntimeException("Payment not found with id: "+ paymentId));
+        return Optional.of(MapperPayment.mapToDomain(paymentdb));
     }
 }

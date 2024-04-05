@@ -3,6 +3,7 @@ package com.ecommerce.prototype.endpoint;
 import com.ecommerce.prototype.application.domain.Card;
 import com.ecommerce.prototype.application.usecase.CreateTokenizedCardUseCase;
 import com.ecommerce.prototype.application.usecase.exception.TokenizationErrorException;
+import com.ecommerce.prototype.application.usecase.exception.UserDisabledException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,8 +29,12 @@ public class TokenizationController {
             return createTokenizedCardUseCase.createTokenizedCard(card, card.getPayerId())
                     .map(tokenizationResponse -> new ResponseEntity<>(tokenizationResponse, HttpStatus.OK))
                     .orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
-        }catch (TokenizationErrorException error){
+        } catch (UserDisabledException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (TokenizationErrorException error){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error.getMessage());
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

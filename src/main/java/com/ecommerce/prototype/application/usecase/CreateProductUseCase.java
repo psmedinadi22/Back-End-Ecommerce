@@ -1,8 +1,11 @@
 package com.ecommerce.prototype.application.usecase;
 
 import com.ecommerce.prototype.application.domain.Product;
+import com.ecommerce.prototype.application.usecase.exception.CartNotFoundException;
+import com.ecommerce.prototype.application.usecase.exception.InsufficientProductQuantityException;
 import com.ecommerce.prototype.application.usecase.exception.ProductAlreayExistException;
 import com.ecommerce.prototype.application.usecase.repository.ProductRepository;
+import com.ecommerce.prototype.infrastructure.persistence.modeldb.Productdb;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +24,17 @@ public class CreateProductUseCase {
      * @return An Optional containing the created product if successful, empty otherwise.
      */
     public Product createProduct(Product product) {
+        if(product.getQuantity() <= 0){
+            throw new InsufficientProductQuantityException("Product quantity is not valid");
+        }
         if (productRepository.findByName(product.getProductName()).isPresent()) {
             throw new ProductAlreayExistException("Product already exists: " + product.getProductName());
         }
 
-        productRepository.save(product);
-
+        Product productdb = productRepository.save(product)
+                .orElseThrow(() -> new IllegalArgumentException("Product saving error"));
+        product.setProductId(productdb.getProductId());
         return product;
     }
-
 }
 

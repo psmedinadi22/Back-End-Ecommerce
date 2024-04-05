@@ -40,7 +40,7 @@ public class User {
         this.shippingAddress = shippingAddress;
         this.billingAddress = billingAddress;
         this.admin = assignUserRoles(email);
-        this.deleted = false;
+        this.deleted = deleted;
         this.tokenizedCards = tokenizedCards;
         this.orders = orders;
         this.cards = cards;

@@ -29,42 +29,6 @@ public class TokenizedCardProvider implements TokenizedCardRepository {
     private final TokenizedCardJPARepository tokenizedCardJPARepository;
     private final UserProvider userProvider;
 
-    /**
-     * Saves a tokenization response.
-     *
-     * @param tokenizationResponse The tokenization response to be saved.
-     * @return An optional containing the saved tokenization response if successful and the credit card token is present, otherwise empty.
-     */
-    @Override
-    public Optional<TokenizationResponse> save(Optional<TokenizationResponse> tokenizationResponse) {
-        if (tokenizationResponse.isPresent() && tokenizationResponse.get().getCreditCardToken() != null) {
-            CreditCardToken creditCardToken = tokenizationResponse.get().getCreditCardToken();
-            TokenizedCarddb tokenizedCarddb = new TokenizedCarddb(
-                    tokenizationResponse.get().getCode(),
-                    creditCardToken.getCreditCardTokenId(),
-                    creditCardToken.getName(),
-                    creditCardToken.getPayerId(),
-                    creditCardToken.getIdentificationNumber(),
-                    creditCardToken.getPaymentMethod(),
-                    creditCardToken.getMaskedNumber(),
-                    creditCardToken.getExpirationDate()
-            );
-            tokenizedCarddb = tokenizedCardJPARepository.save(tokenizedCarddb);
-            return Optional.of(TokenizationResponse.builder()
-                    .code("SUCCESS")
-                    .creditCardToken(CreditCardToken.builder()
-                            .creditCardTokenId(tokenizedCarddb.getCreditCardTokenId())
-                            .name(tokenizedCarddb.getName())
-                            .payerId(String.valueOf(tokenizedCarddb.getPayerId()))
-                            .identificationNumber(String.valueOf(tokenizedCarddb.getIdentificationNumber()))
-                            .paymentMethod(tokenizedCarddb.getPaymentMethod())
-                            .maskedNumber(tokenizedCarddb.getMaskedNumber())
-                            .build())
-                    .build());
-        } else {
-            return Optional.empty();
-        }
-    }
 
     /**
      * Retrieves a tokenized card by its ID.
@@ -78,11 +42,10 @@ public class TokenizedCardProvider implements TokenizedCardRepository {
     }
 
     @Override
-    public Optional<TokenizationResponse> createTokenizedCard(TokenizationResponse tokenizedCard, Integer userId) {
+    public Optional<TokenizedCarddb> createTokenizedCard(TokenizationResponse tokenizedCard, Integer userId) {
         TokenizedCarddb tokenizedCarddb = MapperTokenizedCard.toTokenizedCardModel(tokenizedCard);
         tokenizedCarddb.setUser(userProvider.findById(userId));
-        tokenizedCardJPARepository.save(tokenizedCarddb);
-        return Optional.of(tokenizedCard);
+        return Optional.ofNullable(tokenizedCardJPARepository.save(tokenizedCarddb));
 
     }
 

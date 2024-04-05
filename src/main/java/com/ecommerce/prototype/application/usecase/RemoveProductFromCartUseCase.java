@@ -1,6 +1,5 @@
 package com.ecommerce.prototype.application.usecase;
 
-
 import com.ecommerce.prototype.application.domain.Product;
 import com.ecommerce.prototype.application.usecase.exception.ProductNotFoundException;
 import com.ecommerce.prototype.application.usecase.repository.CartRepository;
@@ -29,7 +28,9 @@ public class RemoveProductFromCartUseCase {
 
         cartRepository.findById(cartId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found with ID: " + cartId));
-        Productdb productdb = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productId));
+
+        Productdb productdb = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productId));
         Product product = MapperProduct.toProductDomain(productdb);
         cartRepository.removeProduct(cartId, product);
     }

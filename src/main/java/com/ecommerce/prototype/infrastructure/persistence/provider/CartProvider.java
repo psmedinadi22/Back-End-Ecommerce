@@ -74,7 +74,16 @@ public class CartProvider implements CartRepository {
                 .findFirst()
                 .orElseThrow(() -> new ProductNotFoundException("Product not found in cart"));
 
+        int index = cart.getProducts().indexOf(existingProduct);
         cart.getProducts().remove(existingProduct);
+
+
+        if (index != -1 && index < cart.getProductsQuantity().size()) {
+            cart.getProductsQuantity().remove(index);
+        } else {
+            throw new ProductNotFoundException("Product quantity not found in cart");
+        }
+        
         cartJPARepository.save(cart);
     }
 
@@ -107,8 +116,7 @@ public class CartProvider implements CartRepository {
 
         Cart savedCart =new Cart(
                 cartdb.getCartId(),
-                cartdb.getStatus(),
-                MapperUser.toUserDomain(cartdb.getUser())
+                cartdb.getStatus()
         );
         return Optional.of(savedCart);
     }
