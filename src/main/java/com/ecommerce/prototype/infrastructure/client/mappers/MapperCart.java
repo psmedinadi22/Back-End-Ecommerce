@@ -41,6 +41,7 @@ public class MapperCart {
      * @throws IllegalArgumentException If there is an error during mapping.
      */
     public static Cartdb mapToModel(Cart cart) throws IllegalArgumentException {
+
         List<Productdb> productdbs = cart.getProducts().stream()
                 .map(MapperProduct::toProductModel)
                 .collect(Collectors.toList());

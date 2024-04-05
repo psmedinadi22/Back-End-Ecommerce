@@ -1,10 +1,14 @@
 package com.ecommerce.prototype.infrastructure.client.mappers;
 
-import com.ecommerce.prototype.application.domain.Email;
-import com.ecommerce.prototype.application.domain.Password;
-import com.ecommerce.prototype.application.domain.User;
+import com.ecommerce.prototype.application.domain.*;
 import com.ecommerce.prototype.infrastructure.client.request.UserRequest;
+import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
+import com.ecommerce.prototype.infrastructure.persistence.modeldb.Orderdb;
+import com.ecommerce.prototype.infrastructure.persistence.modeldb.TokenizedCarddb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class MapperUser {
     /**
@@ -37,6 +41,18 @@ public class MapperUser {
      */
     public static User toUserDomain(Userdb userdb) throws IllegalArgumentException{
 
+        List<TokenizedCard> tokenizedCars = userdb.getTokenizedCards().stream()
+                .map(MapperTokenizedCard::mapToDomain)
+                .collect(Collectors.toList());
+
+        List<Order> orders = userdb.getOrders().stream()
+                .map(MapperOrder::mapToDomain)
+                .collect(Collectors.toList());
+
+        List<Cart> carts = userdb.getCarts().stream()
+                .map(MapperCart::mapToDomain)
+                .collect(Collectors.toList());
+
         return User.builder()
                 .userId(userdb.getUserId())
                 .name(userdb.getName())
@@ -49,9 +65,9 @@ public class MapperUser {
                 .billingAddress(userdb.getBillingAddress())
                 .admin(userdb.getAdmin())
                 .deleted(userdb.getDeleted())
-                .tokenizedCards(userdb.getTokenizedCards())
-                .orders(userdb.getOrders())
-                .cards(userdb.getCarts())
+                .tokenizedCards(tokenizedCars)
+                .orders(orders)
+                .cards(carts)
                 .build();
     }
 
@@ -63,6 +79,18 @@ public class MapperUser {
      * @throws IllegalArgumentException If the provided User object is null.
      */
     public static Userdb toUserModel(User user) throws IllegalArgumentException {
+
+        List<TokenizedCarddb> tokenizedCardbs = user.getTokenizedCards().stream()
+                .map(MapperTokenizedCard::mapToModel)
+                .collect(Collectors.toList());
+
+        List<Orderdb> orderdbs = user.getOrders().stream()
+                .map(MapperOrder::mapToModel)
+                .collect(Collectors.toList());
+
+        List<Cartdb> cartdbs = user.getCards().stream()
+                .map(MapperCart::mapToModel)
+                .collect(Collectors.toList());
 
         Userdb userdb = new Userdb();
         userdb.setUserId(user.getUserId());
@@ -76,8 +104,9 @@ public class MapperUser {
         userdb.setBillingAddress(user.getBillingAddress());
         userdb.setAdmin(user.getAdmin());
         userdb.setDeleted(user.getDeleted());
-        userdb.setTokenizedCards(user.getTokenizedCards());
-        userdb.setCarts(user.getCards());
+        userdb.setTokenizedCards(tokenizedCardbs);
+        userdb.setCarts(cartdbs);
+        userdb.setOrders(orderdbs);
         return userdb;
     }
 

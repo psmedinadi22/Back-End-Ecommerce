@@ -24,11 +24,11 @@ public class User {
     private UserBillingAddress billingAddress;
     private Boolean admin;
     private Boolean deleted;
-    private List<TokenizedCarddb> tokenizedCards;
-    private List<Orderdb> orders;
-    private List<Cartdb> cards;
+    private List<TokenizedCard> tokenizedCards;
+    private List<Order> orders;
+    private List<Cart> cards;
 
-    public User(Integer userId, String name, Email email, Password password, String phoneNumber, String identificationType, String identificationNumber, UserShippingAddress shippingAddress, UserBillingAddress billingAddress, Boolean admin, Boolean deleted, List<TokenizedCarddb> tokenizedCards, List<Orderdb> orders, List<Cartdb> cards) {
+    public User(Integer userId, String name, Email email, Password password, String phoneNumber, String identificationType, String identificationNumber, UserShippingAddress shippingAddress, UserBillingAddress billingAddress, Boolean admin, Boolean deleted, List<TokenizedCard> tokenizedCards, List<Order> orders, List<Cart> cards) {
 
         this.userId = userId;
         this.name = name;

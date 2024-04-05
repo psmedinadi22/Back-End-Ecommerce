@@ -2,6 +2,8 @@ package com.ecommerce.prototype.application.domain;
 
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,7 +18,7 @@ public class TokenizedCard {
     private String paymentMethod;
     private String number;
     private String expirationDate;
-    private String creationDate;
+    private Date creationDate;
     private String maskedNumber;
     private String errorDescription;
 }

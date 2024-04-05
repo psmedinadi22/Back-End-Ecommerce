@@ -7,6 +7,8 @@ import com.ecommerce.prototype.infrastructure.client.response.CreditCardToken;
 import com.ecommerce.prototype.infrastructure.client.response.TokenizationResponse;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.TokenizedCarddb;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public class MapperTokenizedCard {
@@ -54,11 +56,27 @@ public class MapperTokenizedCard {
         tokenizedCard.setPaymentMethod(tokenizedCarddb.getPaymentMethod());
         tokenizedCard.setNumber(tokenizedCarddb.getMaskedNumber());
         tokenizedCard.setExpirationDate(tokenizedCarddb.getExpirationDate());
-        tokenizedCard.setCreationDate(tokenizedCarddb.getCreatedAt().toString());
+        tokenizedCard.setCreationDate(tokenizedCarddb.getCreatedAt());
         tokenizedCard.setMaskedNumber(tokenizedCarddb.getMaskedNumber());
 
         return tokenizedCard;
     }
+
+    public static TokenizedCarddb mapToModel(TokenizedCard tokenizedCard) {
+        TokenizedCarddb tokenizedCarddb = new TokenizedCarddb();
+        tokenizedCarddb.setCreditCardTokenId(tokenizedCard.getCreditCardTokenId());
+        tokenizedCarddb.setName(tokenizedCard.getName());
+        tokenizedCarddb.setPayerId(tokenizedCard.getPayerId());
+        tokenizedCarddb.setIdentificationNumber(tokenizedCard.getIdentificationNumber());
+        tokenizedCarddb.setPaymentMethod(tokenizedCard.getPaymentMethod());
+        tokenizedCarddb.setMaskedNumber(tokenizedCard.getNumber());
+        tokenizedCarddb.setExpirationDate(tokenizedCard.getExpirationDate());
+        tokenizedCarddb.setCreatedAt(tokenizedCard.getCreationDate());
+        tokenizedCarddb.setMaskedNumber(tokenizedCard.getMaskedNumber());
+
+        return tokenizedCarddb;
+    }
+
 
 
 }
