@@ -29,24 +29,19 @@ public class ProductProvider implements ProductRepository {
     @Override
     public Optional<Product> save(Product product) {
 
-            Productdb productdb = new Productdb(
-                    product.getProductId() != null ? product.getProductId() : null,
-                    product.getProductName(),
-                    product.getDescription(),
-                    product.getImage(),
-                    product.getPrice(),
-                    product.getQuantity()
-            );
+            Productdb productdb = Productdb.builder()
+                    .productId(product.getProductId() != null ? product.getProductId() : null)
+                    .productName(product.getProductName())
+                    .description(product.getDescription())
+                    .image(product.getImage())
+                    .price(product.getPrice())
+                    .quantity(product.getQuantity())
+                    .deleted(false)
+                    .build();
+
             productdb = productJPARepository.save(productdb);
 
-            return Optional.of(new Product(
-                    productdb.getProductId(),
-                    productdb.getProductName(),
-                    productdb.getDescription(),
-                    productdb.getImage(),
-                    productdb.getPrice(),
-                    productdb.getQuantity()
-            ));
+            return Optional.of(MapperProduct.toProductDomain(productdb));
     }
 
     /**

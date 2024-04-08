@@ -17,15 +17,6 @@ public class Product {
     private int quantity;
     private boolean deleted = false;
 
-    public Product(Integer productId, String productName, String description, String image, double price, int quantity) {
-
-        this.productId = productId;
-        this.productName = productName;
-        this.description = description;
-        this.image = image;
-        this.price = price;
-        this.quantity = quantity;
-    }
 
     /**
      * Validates the data of a product.

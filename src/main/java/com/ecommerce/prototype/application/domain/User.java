@@ -26,9 +26,9 @@ public class User {
     private Boolean deleted;
     private List<TokenizedCard> tokenizedCards;
     private List<Order> orders;
-    private List<Cart> cards;
+    private List<Cart> carts;
 
-    public User(Integer userId, String name, Email email, Password password, String phoneNumber, String identificationType, String identificationNumber, UserShippingAddress shippingAddress, UserBillingAddress billingAddress, Boolean admin, Boolean deleted, List<TokenizedCard> tokenizedCards, List<Order> orders, List<Cart> cards) {
+    public User(Integer userId, String name, Email email, Password password, String phoneNumber, String identificationType, String identificationNumber, UserShippingAddress shippingAddress, UserBillingAddress billingAddress, Boolean admin, Boolean deleted, List<TokenizedCard> tokenizedCards, List<Order> orders, List<Cart> carts) {
 
         this.userId = userId;
         this.name = name;
@@ -43,7 +43,7 @@ public class User {
         this.deleted = deleted;
         this.tokenizedCards = tokenizedCards;
         this.orders = orders;
-        this.cards = cards;
+        this.carts = carts;
         validateUserData(name, phoneNumber, identificationType, identificationNumber);
     }
 
@@ -81,24 +81,6 @@ public class User {
         return email.getAddress().toLowerCase().contains("admin");
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", name='" + name + '\'' +
-                ", email=" + email +
-                ", password=" + password +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", identificationType='" + identificationType + '\'' +
-                ", identificationNumber='" + identificationNumber + '\'' +
-                ", shippingAddress=" + shippingAddress +
-                ", billingAddress=" + billingAddress +
-                ", admin=" + admin +
-                ", deleted=" + deleted +
-                ", tokenizedCards=" + tokenizedCards +
-                ", orders=" + orders +
-                ", cards=" + cards +
-                '}';
-    }
+
 }
 

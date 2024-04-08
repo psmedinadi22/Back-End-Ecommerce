@@ -42,6 +42,7 @@ public class MapperProduct {
                 .image(productdb.getImage())
                 .price(productdb.getPrice())
                 .quantity(productdb.getQuantity())
+                .deleted(productdb.isDeleted())
                 .build();
         Product.validateProductData(product);
 
@@ -55,13 +56,14 @@ public class MapperProduct {
      * @return Productdb The mapped Productdb entity.
      */
     public static Productdb toProductModel(Product product) throws IllegalArgumentException {
-        Productdb productdb = new Productdb();
-        productdb.setProductId(product.getProductId());
-        productdb.setProductName(product.getProductName());
-        productdb.setDescription(product.getDescription());
-        productdb.setImage(product.getImage());
-        productdb.setPrice(product.getPrice());
-        productdb.setQuantity(product.getQuantity());
-        return productdb;
+        return Productdb.builder()
+                .productId(product.getProductId())
+                .productName(product.getProductName())
+                .description(product.getDescription())
+                .image(product.getImage())
+                .price(product.getPrice())
+                .quantity(product.getQuantity())
+                .build();
     }
+
 }

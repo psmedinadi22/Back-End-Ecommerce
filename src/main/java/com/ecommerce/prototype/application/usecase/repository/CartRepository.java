@@ -12,8 +12,6 @@ public interface CartRepository {
 
     void removeProduct(Integer cartId, Product product);
 
-    Optional<Cart> getCartDetails(int cartId);
-
     Optional<Cart> createCart(Integer userId);
 
     Optional<Cartdb> findById(int cartId);
@@ -22,4 +20,6 @@ public interface CartRepository {
 
     String getCartStatus(int cartId);
     List<Cartdb> findByUserId(Integer userId);
+
+    Optional<Cart> getCart(int cartId);
 }

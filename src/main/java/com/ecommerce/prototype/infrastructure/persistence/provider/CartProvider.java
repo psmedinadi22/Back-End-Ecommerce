@@ -8,7 +8,6 @@ import com.ecommerce.prototype.application.usecase.exception.ProductNotFoundExce
 import com.ecommerce.prototype.application.usecase.repository.CartRepository;
 import com.ecommerce.prototype.application.usecase.repository.ProductRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperCart;
-import com.ecommerce.prototype.infrastructure.client.mappers.MapperUser;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Productdb;
 import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.CartJPARepository;
@@ -24,6 +23,7 @@ public class CartProvider implements CartRepository {
 
     private final CartJPARepository cartJPARepository;
     private final ProductRepository productRepository;
+    private final UserProvider userProvider;
 
     /**
      * Adds a product to a cart.
@@ -89,19 +89,6 @@ public class CartProvider implements CartRepository {
 
 
     /**
-     * Retrieves the details of a cart.
-     *
-     * @param cartId The ID of the cart.
-     * @return Optional of Cart.
-     */
-    @Override
-    public Optional<Cart> getCartDetails(int cartId) {
-        return Optional.empty();
-    }
-
-    private final UserProvider userProvider;
-
-    /**
      * Creates a new cart for a user.
      *
      * @param userId The ID of the user.
@@ -109,6 +96,7 @@ public class CartProvider implements CartRepository {
      */
     @Override
     public Optional<Cart> createCart(Integer userId) {
+
         Cartdb cartdb = new Cartdb();
         cartdb.setStatus("outstanding");
         cartdb.setUser(userProvider.findById(userId));
@@ -154,6 +142,7 @@ public class CartProvider implements CartRepository {
      */
     @Override
     public String getCartStatus(int cartId) {
+
         Optional<Cartdb> cartOptional = cartJPARepository.findById(cartId);
         if (cartOptional.isPresent()) {
             return cartOptional.get().getStatus();
@@ -170,7 +159,14 @@ public class CartProvider implements CartRepository {
      */
     @Override
     public List<Cartdb> findByUserId(Integer userId) {
-        return cartJPARepository.findByUserId(userId);
 
+        return cartJPARepository.findByUserId(userId);
+    }
+
+    @Override
+    public Optional<Cart> getCart(int cartId) {
+        Cartdb cartdb = cartJPARepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException("Cart not found with ID: " + cartId));
+        return Optional.of(MapperCart.mapToDomain(cartdb));
     }
 }

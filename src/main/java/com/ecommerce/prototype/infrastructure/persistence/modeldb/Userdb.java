@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
+@Builder
 @Table(name = "users")
 public class Userdb {
 

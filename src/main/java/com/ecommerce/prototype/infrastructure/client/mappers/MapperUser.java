@@ -7,7 +7,9 @@ import com.ecommerce.prototype.infrastructure.persistence.modeldb.Orderdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.TokenizedCarddb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MapperUser {
@@ -41,17 +43,17 @@ public class MapperUser {
      */
     public static User toUserDomain(Userdb userdb) throws IllegalArgumentException{
 
-        List<TokenizedCard> tokenizedCars = userdb.getTokenizedCards().stream()
-                .map(MapperTokenizedCard::mapToDomain)
-                .collect(Collectors.toList());
+        List<TokenizedCard> tokenizedCards = Optional.ofNullable(userdb.getTokenizedCards())
+                .map(cards -> cards.stream().map(MapperTokenizedCard::mapToDomain).collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
 
-        List<Order> orders = userdb.getOrders().stream()
-                .map(MapperOrder::mapToDomain)
-                .collect(Collectors.toList());
+        List<Order> orders = Optional.ofNullable(userdb.getOrders())
+                .map(orderdbs -> orderdbs.stream().map(MapperOrder::mapToDomain).collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
 
-        List<Cart> carts = userdb.getCarts().stream()
-                .map(MapperCart::mapToDomain)
-                .collect(Collectors.toList());
+        List<Cart> carts = Optional.ofNullable(userdb.getCarts())
+                .map(cartdbs -> cartdbs.stream().map(MapperCart::mapToDomain).collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
 
         return User.builder()
                 .userId(userdb.getUserId())
@@ -65,9 +67,12 @@ public class MapperUser {
                 .billingAddress(userdb.getBillingAddress())
                 .admin(userdb.getAdmin())
                 .deleted(userdb.getDeleted())
-                .tokenizedCards(tokenizedCars)
-                .orders(orders)
-                .cards(carts)
+                .tokenizedCards(Optional.ofNullable(tokenizedCards)
+                        .orElse(Collections.emptyList()))
+                .carts(Optional.ofNullable(carts)
+                        .orElse(Collections.emptyList()))
+                .orders(Optional.ofNullable(orders)
+                        .orElse(Collections.emptyList()))
                 .build();
     }
 
@@ -79,35 +84,69 @@ public class MapperUser {
      * @throws IllegalArgumentException If the provided User object is null.
      */
     public static Userdb toUserModel(User user) throws IllegalArgumentException {
+        List<TokenizedCarddb> tokenizedCardbs = Optional.ofNullable(user.getTokenizedCards())
+                .map(cards -> cards.stream().map(MapperTokenizedCard::mapToModel).collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
 
-        List<TokenizedCarddb> tokenizedCardbs = user.getTokenizedCards().stream()
-                .map(MapperTokenizedCard::mapToModel)
-                .collect(Collectors.toList());
+        List<Orderdb> orderdbs = Optional.ofNullable(user.getOrders())
+                .map(orders -> orders.stream().map(MapperOrder::mapToModel).collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
 
-        List<Orderdb> orderdbs = user.getOrders().stream()
-                .map(MapperOrder::mapToModel)
-                .collect(Collectors.toList());
+        List<Cartdb> cartdbs = Optional.ofNullable(user.getCarts())
+                .map(cards -> cards.stream().map(MapperCart::mapToModel).collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
 
-        List<Cartdb> cartdbs = user.getCards().stream()
-                .map(MapperCart::mapToModel)
-                .collect(Collectors.toList());
-
-        Userdb userdb = new Userdb();
-        userdb.setUserId(user.getUserId());
-        userdb.setName(user.getName());
-        userdb.setEmail(user.getEmail().getAddress());
-        userdb.setPassword(user.getPassword().getValue());
-        userdb.setPhoneNumber(user.getPhoneNumber());
-        userdb.setIdentificationType(user.getIdentificationType());
-        userdb.setIdentificationNumber(user.getIdentificationNumber());
-        userdb.setShippingAddress(user.getShippingAddress());
-        userdb.setBillingAddress(user.getBillingAddress());
-        userdb.setAdmin(user.getAdmin());
-        userdb.setDeleted(user.getDeleted());
-        userdb.setTokenizedCards(tokenizedCardbs);
-        userdb.setCarts(cartdbs);
-        userdb.setOrders(orderdbs);
-        return userdb;
+        return Userdb.builder()
+                .userId(user.getUserId())
+                .name(user.getName())
+                .email(user.getEmail().getAddress())
+                .password(user.getPassword().getValue())
+                .phoneNumber(user.getPhoneNumber())
+                .identificationType(user.getIdentificationType())
+                .identificationNumber(user.getIdentificationNumber())
+                .shippingAddress(user.getShippingAddress())
+                .billingAddress(user.getBillingAddress())
+                .admin(user.getAdmin())
+                .deleted(user.getDeleted())
+                .tokenizedCards(Optional.ofNullable(tokenizedCardbs)
+                        .orElse(Collections.emptyList()))
+                .carts(Optional.ofNullable(cartdbs)
+                        .orElse(Collections.emptyList()))
+                .orders(Optional.ofNullable(orderdbs)
+                        .orElse(Collections.emptyList()))
+                .build();
     }
+
+
+    public static User mapToDomainWithoutCarts(Userdb userdb) throws IllegalArgumentException {
+
+        List<TokenizedCard> tokenizedCards = Optional.ofNullable(userdb.getTokenizedCards())
+                .map(cards -> cards.stream().map(MapperTokenizedCard::mapToDomain).collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+
+        List<Order> orders = Optional.ofNullable(userdb.getOrders())
+                .map(orderdbs -> orderdbs.stream().map(MapperOrder::mapToDomain).collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+
+        return User.builder()
+                .userId(userdb.getUserId())
+                .name(userdb.getName())
+                .email(new Email(userdb.getEmail()))
+                .password(new Password(userdb.getPassword()))
+                .phoneNumber(userdb.getPhoneNumber())
+                .identificationType(userdb.getIdentificationType())
+                .identificationNumber(userdb.getIdentificationNumber())
+                .shippingAddress(userdb.getShippingAddress())
+                .billingAddress(userdb.getBillingAddress())
+                .admin(userdb.getAdmin())
+                .deleted(userdb.getDeleted())
+                .tokenizedCards(Optional.ofNullable(tokenizedCards)
+                        .orElse(Collections.emptyList()))
+                .orders(Optional.ofNullable(orders)
+                        .orElse(Collections.emptyList()))
+                .build();
+    }
+
+
 
 }

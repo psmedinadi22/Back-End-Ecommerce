@@ -1,10 +1,7 @@
 package com.ecommerce.prototype.endpoint;
 
 
-import com.ecommerce.prototype.application.domain.Cart;
-import com.ecommerce.prototype.application.domain.Order;
-import com.ecommerce.prototype.application.domain.TokenizedCard;
-import com.ecommerce.prototype.application.domain.User;
+import com.ecommerce.prototype.application.domain.*;
 import com.ecommerce.prototype.application.usecase.*;
 import com.ecommerce.prototype.application.usecase.exception.CartNotFoundException;
 import com.ecommerce.prototype.application.usecase.exception.PasswordLengthException;
@@ -16,7 +13,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 @RestController
@@ -103,7 +106,25 @@ public class UserController {
     public ResponseEntity<?> getUserCarts(@PathVariable Integer userId) {
         try {
             List<Cart> carts = getUserCartsUseCase.getUserCarts(userId);
-            return ResponseEntity.ok(carts);
+
+
+            List<Map<String, Object>> cartsWithUserInfo = carts.stream()
+                    .map(cart -> {
+                        Map<String, Object> cartInfo = new LinkedHashMap<>();
+                        cartInfo.put("cartId", cart.getCartId());
+                        cartInfo.put("status", cart.getStatus());
+                        cartInfo.put("userId", cart.getUser().getUserId());
+                        List<Integer> productIds = cart.getProducts().stream()
+                                .map(Product::getProductId)
+                                .collect(Collectors.toList());
+                        cartInfo.put("productIds", productIds);
+                        cartInfo.put("productQuantities", cart.getProductsQuantity());
+
+                        return cartInfo;
+                    })
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(cartsWithUserInfo);
         } catch (UserNoExistException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found: " + e.getMessage());
         } catch (CartNotFoundException e) {
@@ -112,6 +133,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: " + e.getMessage());
         }
     }
+
+
 
     @GetMapping("/user/{userId}/tokenizedCads")
     public ResponseEntity<?> getUserTokenizedCarts(@PathVariable Integer userId) {

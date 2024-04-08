@@ -29,7 +29,7 @@ public class MapperCart {
         cart.setStatus(cartdb.getStatus());
         cart.setProducts(products);
         cart.setProductsQuantity(productsQuantity);
-        cart.setUser(MapperUser.toUserDomain(cartdb.getUser()));
+        cart.setUser(MapperUser.mapToDomainWithoutCarts(cartdb.getUser()));
         return cart;
     }
 
@@ -55,5 +55,4 @@ public class MapperCart {
         cartdb.setUser(MapperUser.toUserModel(cart.getUser()));
         return cartdb;
     }
-
 }

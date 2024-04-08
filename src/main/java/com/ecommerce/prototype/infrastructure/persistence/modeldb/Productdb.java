@@ -4,10 +4,14 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
+@Builder
+@AllArgsConstructor
 @Table(name = "products")
 public class Productdb {
 
@@ -20,17 +24,5 @@ public class Productdb {
     private double price;
     private int quantity;
     private boolean deleted = false;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id")
-    @JsonBackReference
-    private Cartdb cart;
 
-    public Productdb(Integer productId, String productName, String description, String image, double price, int quantity) {
-        this.productId = productId;
-        this.productName = productName;
-        this.description = description;
-        this.image = image;
-        this.price = price;
-        this.quantity = quantity;
-    }
 }
