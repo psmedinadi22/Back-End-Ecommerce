@@ -21,7 +21,6 @@ public class MapperOrder {
         order.setOrderStatus(orderdb.getOrderStatus());
         order.setUser(MapperUser.toUserDomain(orderdb.getUser()));
        // order.setPayment(orderdb.getPaymentdb() != null ? MapperPayment.mapToDomain(orderdb.getPaymentdb()) : null);
-
         return order;
     }
 
@@ -43,4 +42,19 @@ public class MapperOrder {
        // orderdb.setPaymentdb(order.getPayment() != null ? MapperPayment.mapToModel(order.getPayment()) : null);
         return orderdb;
     }
+
+
+    public static Order mapToDomainWithoutUser(Orderdb orderdb) throws IllegalArgumentException{
+        Order order = new Order();
+        order.setOrderID(orderdb.getOrderID());
+        order.setCreationDate(orderdb.getCreationDate());
+        order.setTotalAmount(orderdb.getTotalAmount());
+        order.setOrderStatus(orderdb.getOrderStatus());
+
+        //order.setUser(MapperUser.mapToDomainWithoutOrders(orderdb.getUser()));
+
+        // order.setPayment(orderdb.getPaymentdb() != null ? MapperPayment.mapToDomain(orderdb.getPaymentdb()) : null);
+        return order;
+    }
+
 }

@@ -157,7 +157,19 @@ public class UserController {
     public ResponseEntity<?> getUserOrders(@PathVariable Integer userId) {
         try {
             List<Order> orders = getUserOrdersUseCase.getUserOrders(userId);
-            return ResponseEntity.ok(orders);
+            List<Map<String, Object>> ordersWithUserInfo = orders.stream()
+                    .map(cart -> {
+                        Map<String, Object> orderInfo = new LinkedHashMap<>();
+                        orderInfo.put("orderID", cart.getOrderID());
+                        orderInfo.put("creationDate", cart.getCreationDate());
+                        orderInfo.put("totalAmount", cart.getTotalAmount());
+                        orderInfo.put("orderStatus", cart.getOrderStatus());
+                        orderInfo.put("userID", userId);
+                        return orderInfo;
+                    })
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(ordersWithUserInfo);
         } catch (UserNoExistException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
