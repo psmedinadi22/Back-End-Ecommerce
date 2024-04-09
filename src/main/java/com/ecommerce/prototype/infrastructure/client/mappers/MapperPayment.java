@@ -22,7 +22,6 @@ public class MapperPayment {
         payment.setPaymentMethod(paymentdb.getPaymentMethod());
         payment.setPaymentStatus(paymentdb.getPaymentStatus());
        // payment.setOrder(MapperOrder.mapToDomain(paymentdb.getOrder()));
-
         return payment;
     }
 

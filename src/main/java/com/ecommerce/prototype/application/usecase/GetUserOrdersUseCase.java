@@ -33,7 +33,7 @@ public class GetUserOrdersUseCase {
 
         List<Order> orders = new ArrayList<>();
         for (Orderdb orderdb : orderdbs) {
-            orders.add(MapperOrder.mapToDomainWithoutUser(orderdb));
+            orders.add(MapperOrder.mapToDomain(orderdb));
         }
         return orders;
     }

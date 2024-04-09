@@ -46,7 +46,7 @@ public class PaymentController {
         }
     }
 
-    @GetMapping("/{paymentId}")
+    @GetMapping("/payment/{paymentId}")
     public ResponseEntity<?> getPayment(@PathVariable Integer paymentId) {
         try {
             Optional<Payment> payment = getPaymentUseCase.getPayment(paymentId);
@@ -55,6 +55,8 @@ public class PaymentController {
             } else {
                 return ResponseEntity.notFound().build();
             }
+        } catch (PaymentNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not Found Error: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: " + e.getMessage());
         }

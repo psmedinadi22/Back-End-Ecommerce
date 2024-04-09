@@ -1,6 +1,7 @@
 package com.ecommerce.prototype.infrastructure.persistence.provider;
 
 import com.ecommerce.prototype.application.domain.Payment;
+import com.ecommerce.prototype.application.usecase.exception.PaymentNotFoundException;
 import com.ecommerce.prototype.application.usecase.repository.PaymentRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperPayment;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Paymentdb;
@@ -25,7 +26,7 @@ public class PaymentProvider implements PaymentRepository {
     @Override
     public Optional<Payment> getPayment(Integer paymentId) {
         Paymentdb paymentdb = paymentJPARepository.findByPaymentID(paymentId)
-                .orElseThrow(() -> new RuntimeException("Payment not found with id: "+ paymentId));
+                .orElseThrow(() -> new PaymentNotFoundException("Payment not found with id: "+ paymentId));
         return Optional.of(MapperPayment.mapToDomain(paymentdb));
     }
 }

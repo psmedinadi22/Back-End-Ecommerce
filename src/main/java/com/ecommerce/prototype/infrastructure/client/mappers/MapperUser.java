@@ -147,6 +147,29 @@ public class MapperUser {
                 .build();
     }
 
+    public static User mapToDomainWithoutOrders(Userdb userdb) throws IllegalArgumentException {
+        List<TokenizedCard> tokenizedCards = Optional.ofNullable(userdb.getTokenizedCards())
+                .map(cards -> cards.stream().map(MapperTokenizedCard::mapToDomain).collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+
+        return User.builder()
+                .userId(userdb.getUserId())
+                .name(userdb.getName())
+                .email(new Email(userdb.getEmail()))
+                .password(new Password(userdb.getPassword()))
+                .phoneNumber(userdb.getPhoneNumber())
+                .identificationType(userdb.getIdentificationType())
+                .identificationNumber(userdb.getIdentificationNumber())
+                .shippingAddress(userdb.getShippingAddress())
+                .billingAddress(userdb.getBillingAddress())
+                .admin(userdb.getAdmin())
+                .deleted(userdb.getDeleted())
+                .tokenizedCards(Optional.ofNullable(tokenizedCards)
+                        .orElse(Collections.emptyList()))
+                .build();
+    }
+
+
 
 
 }

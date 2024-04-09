@@ -5,24 +5,7 @@ import com.ecommerce.prototype.infrastructure.persistence.modeldb.Orderdb;
 
 public class MapperOrder {
 
-    /**
-     * Maps an Orderdb entity to an Order domain object.
-     *
-     * @param orderdb The Orderdb entity to be mapped.
-     * @return Order The mapped Order domain object.
-     * @throws IllegalArgumentException If there is an error during mapping.
-     */
-    public static Order mapToDomain(Orderdb orderdb) throws IllegalArgumentException{
 
-        Order order = new Order();
-        order.setOrderID(orderdb.getOrderID());
-        order.setCreationDate(orderdb.getCreationDate());
-        order.setTotalAmount(orderdb.getTotalAmount());
-        order.setOrderStatus(orderdb.getOrderStatus());
-        order.setUser(MapperUser.toUserDomain(orderdb.getUser()));
-       // order.setPayment(orderdb.getPaymentdb() != null ? MapperPayment.mapToDomain(orderdb.getPaymentdb()) : null);
-        return order;
-    }
 
     /**
      * Maps an Order domain object to an Orderdb entity.
@@ -44,17 +27,23 @@ public class MapperOrder {
     }
 
 
-    public static Order mapToDomainWithoutUser(Orderdb orderdb) throws IllegalArgumentException{
+    /**
+     * Maps an Orderdb entity to an Order domain object.
+     *
+     * @param orderdb The Orderdb entity to be mapped.
+     * @return Order The mapped Order domain object.
+     * @throws IllegalArgumentException If there is an error during mapping.
+     */
+    public static Order mapToDomain(Orderdb orderdb) throws IllegalArgumentException{
         Order order = new Order();
         order.setOrderID(orderdb.getOrderID());
         order.setCreationDate(orderdb.getCreationDate());
         order.setTotalAmount(orderdb.getTotalAmount());
         order.setOrderStatus(orderdb.getOrderStatus());
-
-        //order.setUser(MapperUser.mapToDomainWithoutOrders(orderdb.getUser()));
-
+        order.setUser(MapperUser.mapToDomainWithoutOrders(orderdb.getUser()));
         // order.setPayment(orderdb.getPaymentdb() != null ? MapperPayment.mapToDomain(orderdb.getPaymentdb()) : null);
         return order;
     }
+
 
 }

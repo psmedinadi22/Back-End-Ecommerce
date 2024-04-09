@@ -63,11 +63,9 @@ public class OrderProvider implements OrderRepository {
     public Optional<Order> getOrder(int orderId) {
 
         Optional<Orderdb> orderdbOptional = orderJPARepository.findByOrderID(orderId);
-        logger.info("orderoptional:" + orderdbOptional);
-        Orderdb orderdb = orderdbOptional.orElseThrow(() -> new RuntimeException("Order not found"));
-        logger.info("orederDb"+orderdb);
+
+        Orderdb orderdb = orderdbOptional.orElseThrow(() -> new RuntimeException("Order not found with Id: " + orderId));
         Order orderSaved = MapperOrder.mapToDomain(orderdb);
-        logger.info("oreder saved: {} "+orderSaved);
         return Optional.of(orderSaved);
     }
 
@@ -92,13 +90,11 @@ public class OrderProvider implements OrderRepository {
      */
     @Override
     public Order createOrder(Order order, Integer userId) {
-        logger.info("begin Mappper");
+
         Orderdb orderdb = MapperOrder.mapToModel(order);
-        logger.info("finish mapper");
         orderdb.setUser(userProvider.findById(userId));
-        logger.info("begin saving jpa");
         orderdb = orderJPARepository.save(orderdb);
-        logger.info("ORDER SAVE");
+
         return MapperOrder.mapToDomain(orderdb);
     }
 

@@ -14,6 +14,7 @@ public class GetPaymentUseCase {
     private PaymentRepository paymentRepository;
 
     public Optional<Payment> getPayment(Integer paymentId){
+
         return  paymentRepository.getPayment(paymentId);
     }
 }

@@ -31,8 +31,10 @@ public class OrderController {
     @GetMapping("/order/{orderId}")
     public ResponseEntity<?> getOrder(@PathVariable int orderId) {
         try {
-            Optional<Order> orderOptional = getOrderUseCase.getOrder(orderId);
-            return orderOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            Order order = getOrderUseCase.getOrder(orderId)
+                    .orElseThrow(() -> new RuntimeException("Order not found with Id: " + orderId));
+
+            return ResponseEntity.ok(order);
         } catch (OrderNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
