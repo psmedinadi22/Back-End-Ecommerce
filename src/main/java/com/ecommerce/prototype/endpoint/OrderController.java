@@ -5,6 +5,7 @@ import com.ecommerce.prototype.application.usecase.GetOrderUseCase;
 import com.ecommerce.prototype.application.usecase.GetUserOrdersUseCase;
 import com.ecommerce.prototype.application.usecase.exception.OrderNotFoundException;
 import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
+import com.ecommerce.prototype.infrastructure.client.response.OrderResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +35,14 @@ public class OrderController {
             Order order = getOrderUseCase.getOrder(orderId)
                     .orElseThrow(() -> new RuntimeException("Order not found with Id: " + orderId));
 
-            return ResponseEntity.ok(order);
+            OrderResponse orderResponse = new OrderResponse();
+            orderResponse.setOrderId(order.getOrderID());
+            orderResponse.setCreationDate(order.getCreationDate());
+            orderResponse.setTotalAmount(order.getTotalAmount());
+            orderResponse.setOrderStatus(order.getOrderStatus());
+            orderResponse.setUserId(order.getUser().getUserId());
+
+            return ResponseEntity.ok(orderResponse);
         } catch (OrderNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {

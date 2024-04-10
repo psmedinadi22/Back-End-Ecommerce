@@ -1,4 +1,4 @@
-package com.ecommerce.prototype.application.domain;
+package com.ecommerce.prototype.infrastructure.client.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,16 +6,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
-
-    private Integer orderID;
+public class OrderResponse {
+    private Integer orderId;
     private Date creationDate;
-    private double totalAmount;
+    private Double totalAmount;
     private String orderStatus;
-    private User user;
-  //  private Payment payment;
+    private Integer userId;
+
 }
+

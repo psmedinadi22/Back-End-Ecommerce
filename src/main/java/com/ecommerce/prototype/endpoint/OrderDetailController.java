@@ -4,6 +4,7 @@ import com.ecommerce.prototype.application.domain.OrderDetail;
 import com.ecommerce.prototype.application.usecase.GetOrderDetailUseCase;
 import com.ecommerce.prototype.application.usecase.ProcessPaymentUseCase;
 import com.ecommerce.prototype.application.usecase.exception.OrderDetailNotFoundException;
+import com.ecommerce.prototype.infrastructure.client.response.OrderDetailResponse;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +30,25 @@ public class OrderDetailController {
     @GetMapping("/orderDetail/{orderDetailId}")
     public ResponseEntity<?> getOrderDetail(@PathVariable int orderDetailId) {
         try {
-            Optional<OrderDetail> orderOptional = getOrderDetailUseCase.getOrderDetailById(orderDetailId);
-            logger.info("order: " + orderOptional);
-            return orderOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            OrderDetail orderDetail = getOrderDetailUseCase.getOrderDetailById(orderDetailId)
+                    .orElseThrow(() -> new RuntimeException("Error getting Order detail"));
+            
+            OrderDetailResponse response = new OrderDetailResponse();
+            response.setOrderDetailId(orderDetail.getOrderDetailId());
+            response.setPurchaseDate(orderDetail.getPurchaseDate());
+            response.setTotalAmount(orderDetail.getTotalAmount());
+            response.setPaymentMethod(orderDetail.getPaymentMethod());
+            response.setPurchaseStatus(orderDetail.getPurchaseStatus());
+            response.setBuyerId(orderDetail.getBuyerId());
+            response.setBuyerFullName(orderDetail.getBuyerFullName());
+            response.setBuyerEmailAddress(orderDetail.getBuyerEmailAddress());
+            response.setBuyerContactPhone(orderDetail.getBuyerContactPhone());
+            response.setBuyerDniNumber(orderDetail.getBuyerDniNumber());
+            response.setShippingAddress(orderDetail.getShippingAddress());
+            response.setBillingAddress(orderDetail.getBillingAddress());
+
+            return ResponseEntity.ok(response);
+
         } catch (OrderDetailNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {

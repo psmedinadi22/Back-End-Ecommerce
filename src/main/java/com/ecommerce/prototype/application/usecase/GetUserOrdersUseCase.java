@@ -30,12 +30,10 @@ public class GetUserOrdersUseCase {
             throw new UserNoExistException("User not found with ID: " + userId);
         }
         List<Orderdb> orderdbs = orderRepository.findByUserId(userId);
-
         List<Order> orders = new ArrayList<>();
         for (Orderdb orderdb : orderdbs) {
             orders.add(MapperOrder.mapToDomain(orderdb));
         }
         return orders;
     }
-
 }
