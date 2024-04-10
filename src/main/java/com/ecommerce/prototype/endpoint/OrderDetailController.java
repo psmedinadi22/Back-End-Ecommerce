@@ -32,7 +32,7 @@ public class OrderDetailController {
         try {
             OrderDetail orderDetail = getOrderDetailUseCase.getOrderDetailById(orderDetailId)
                     .orElseThrow(() -> new RuntimeException("Error getting Order detail"));
-            
+
             OrderDetailResponse response = new OrderDetailResponse();
             response.setOrderDetailId(orderDetail.getOrderDetailId());
             response.setPurchaseDate(orderDetail.getPurchaseDate());
