@@ -28,8 +28,8 @@ public class Userdb {
     private UserShippingAddress shippingAddress;
     @Embedded
     private UserBillingAddress billingAddress;
-    private Boolean admin;
-    private Boolean deleted=false;
+    private Boolean isAdmin;
+    private Boolean isDeleted=false;
     @OneToMany(mappedBy = "user")
     private List<TokenizedCarddb> tokenizedCards;
     @OneToMany(mappedBy = "user")
@@ -37,7 +37,7 @@ public class Userdb {
     @OneToMany(mappedBy = "user")
     private List<Cartdb> carts;
 
-    public Userdb(String name, String email, String password, String phoneNumber, String identificationType, String identificationNumber, UserShippingAddress shippingAddress, UserBillingAddress billingAddress, Boolean admin) {
+    public Userdb(String name, String email, String password, String phoneNumber, String identificationType, String identificationNumber, UserShippingAddress shippingAddress, UserBillingAddress billingAddress, Boolean isAdmin) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -46,7 +46,7 @@ public class Userdb {
         this.identificationNumber = identificationNumber;
         this.shippingAddress = shippingAddress;
         this.billingAddress = billingAddress;
-        this.admin = admin;
+        this.isAdmin = isAdmin;
     }
 
 

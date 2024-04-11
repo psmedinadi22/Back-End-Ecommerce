@@ -116,7 +116,7 @@ public class ProcessPaymentUseCase {
     private User retrieveUser(Integer userId) {
         Userdb userdb = userRepository.findById(userId);
         if (userdb!= null) {
-            if (userdb.getDeleted()) {
+            if (userdb.getIsDeleted()) {
                 throw new UserDisabledException("The user with ID: " + userId + " is disabled.");
             }
             return MapperUser.toUserDomain(userdb);

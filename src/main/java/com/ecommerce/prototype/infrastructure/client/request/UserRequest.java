@@ -20,19 +20,6 @@ public class UserRequest {
     private UserShippingAddress shippingAddress;
     private UserBillingAddress billingAddress;
 
-    @Override
-    public String toString() {
-        return "UserRequest{" +
-                "name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", identificationType='" + identificationType + '\'' +
-                ", identificationNumber='" + identificationNumber + '\'' +
-                ", shippingAddress=" + shippingAddress +
-                ", billingAddress=" + billingAddress +
-                '}';
-    }
 }
 
 

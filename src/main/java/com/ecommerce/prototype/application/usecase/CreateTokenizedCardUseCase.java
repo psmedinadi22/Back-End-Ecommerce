@@ -44,7 +44,7 @@ public class CreateTokenizedCardUseCase {
     public Optional<TokenizationResponse> createTokenizedCard(Card card, Integer userId) throws IllegalAccessException, JsonProcessingException {
 
         User user = retrieveUser(userId);
-        if (user.getDeleted()) {
+        if (user.getIsDeleted()) {
             throw new UserDisabledException("The user with ID: " + userId + " is disabled.");
         }
 

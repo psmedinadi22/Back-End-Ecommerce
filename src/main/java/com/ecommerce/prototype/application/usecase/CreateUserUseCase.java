@@ -26,7 +26,7 @@ public class CreateUserUseCase {
         if (userRepository.existByEmail(user.getEmail().getAddress())) {
             throw new UserAlreadyExistException("The user with the email already exists: " + user.getEmail().getAddress());
         }
-        user.setDeleted(false);
+        user.setIsDeleted(false);
         return userRepository.save(user);
     }
 

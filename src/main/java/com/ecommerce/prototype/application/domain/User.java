@@ -22,13 +22,13 @@ public class User {
     private String identificationNumber;
     private UserShippingAddress shippingAddress;
     private UserBillingAddress billingAddress;
-    private Boolean admin;
-    private Boolean deleted;
+    private Boolean isAdmin;
+    private Boolean isDeleted;
     private List<TokenizedCard> tokenizedCards;
     private List<Order> orders;
     private List<Cart> carts;
 
-    public User(Integer userId, String name, Email email, Password password, String phoneNumber, String identificationType, String identificationNumber, UserShippingAddress shippingAddress, UserBillingAddress billingAddress, Boolean admin, Boolean deleted, List<TokenizedCard> tokenizedCards, List<Order> orders, List<Cart> carts) {
+    public User(Integer userId, String name, Email email, Password password, String phoneNumber, String identificationType, String identificationNumber, UserShippingAddress shippingAddress, UserBillingAddress billingAddress, Boolean isAdmin, Boolean isDeleted, List<TokenizedCard> tokenizedCards, List<Order> orders, List<Cart> carts) {
 
         this.userId = userId;
         this.name = name;
@@ -39,8 +39,8 @@ public class User {
         this.identificationNumber = identificationNumber;
         this.shippingAddress = shippingAddress;
         this.billingAddress = billingAddress;
-        this.admin = assignUserRoles(email);
-        this.deleted = deleted;
+        this.isAdmin = assignUserRoles(email);
+        this.isDeleted = isDeleted;
         this.tokenizedCards = tokenizedCards;
         this.orders = orders;
         this.carts = carts;

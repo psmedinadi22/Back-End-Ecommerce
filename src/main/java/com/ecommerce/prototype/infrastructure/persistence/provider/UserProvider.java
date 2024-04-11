@@ -65,7 +65,7 @@ public class UserProvider implements UserRepository {
 
         Userdb user = userJPARepository.findById(userId)
                 .orElseThrow(() -> new UserNoExistException("User not found with ID: " + userId));
-        user.setDeleted(true);
+        user.setIsDeleted(true);
         userJPARepository.save(user);
     }
 

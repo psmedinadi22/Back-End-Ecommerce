@@ -58,7 +58,7 @@ public class UserController {
                     .withPhoneNumber(user.getPhoneNumber())
                     .withIdentificationType(user.getIdentificationType())
                     .withIdentificationNumber(user.getIdentificationNumber())
-                    .withAdmin(user.getAdmin())
+                    .withAdmin(user.getIsAdmin())
                     .withShippingAddress(user.getShippingAddress())
                     .withBillingAddress(user.getBillingAddress());
 

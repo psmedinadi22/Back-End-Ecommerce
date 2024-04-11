@@ -17,7 +17,7 @@ public class Product {
     private int quantity;
     private boolean deleted = false;
 
-
+//TODO: APLICAR DRY
     /**
      * Validates the data of a product.
      *
