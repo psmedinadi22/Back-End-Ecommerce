@@ -3,10 +3,11 @@ package com.ecommerce.prototype.application.usecase;
 import com.ecommerce.prototype.application.domain.User;
 import com.ecommerce.prototype.application.usecase.exception.UserAlreadyExistException;
 import com.ecommerce.prototype.application.usecase.repository.UserRepository;
-import com.ecommerce.prototype.infrastructure.client.request.UserRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @AllArgsConstructor
@@ -29,5 +30,4 @@ public class CreateUserUseCase {
         user.setIsDeleted(false);
         return userRepository.save(user);
     }
-
 }

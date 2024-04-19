@@ -11,10 +11,11 @@ import com.ecommerce.prototype.infrastructure.client.mappers.MapperUser;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class CreateCartUseCase {
@@ -22,6 +23,7 @@ public class CreateCartUseCase {
     private CartRepository cartRepository;
     private GetUserCartsUseCase getUserCartsUseCase;
     private UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(CreateCartUseCase.class);
 
     /**
      * Create a new cart for a given user, after checking if there are any pending carts.
@@ -30,28 +32,61 @@ public class CreateCartUseCase {
      * @return The cart created.
      * @throws CartPendingPaymentException If the user already has a cart pending payment.
      */
-    public Optional<Cart> createCart(Integer userId){
+    public Optional<Cart> createCart(Integer userId) {
 
         User user = retrieveUser(userId);
+        validateUser(user);
+        validateUserCarts(userId);
+
+        return cartRepository.createCart(userId);
+    }
+
+    /**
+     * Retrieves a user by ID from the database.
+     *
+     * @param userId The ID of the user to retrieve.
+     * @return The user object if found.
+     * @throws UserNoExistException If the user is not found in the database.
+     */
+    private User retrieveUser(Integer userId) {
+
+        logger.debug("Retrieving user with ID {}", userId);
+        Userdb userdb = userRepository.findById(userId);
+        if (userdb != null) {
+            logger.debug("User found with ID {}", userId);
+            return MapperUser.toUserDomain(userdb);
+        } else {
+            logger.error("User not found with ID {}", userId);
+            throw new UserNoExistException("User not found with ID: " + userId);
+        }
+    }
+
+    /**
+     * Validates if the retrieved user is disabled.
+     *
+     * @param user The user object to validate.
+     * @throws UserDisabledException If the user is disabled.
+     */
+    private void validateUser(User user) {
 
         if (user.getIsDeleted()) {
-            throw new UserDisabledException("The user with ID: " + userId + " is disabled.");
+            throw new UserDisabledException("The user with ID: " + user.getUserId() + " is disabled.");
         }
+    }
+
+    /**
+     * Validates if the user has any pending carts.
+     *
+     * @param userId The ID of the user to check for pending carts.
+     * @throws CartPendingPaymentException If the user has any pending carts.
+     */
+    private void validateUserCarts(Integer userId) {
 
         List<Cart> userCarts = getUserCartsUseCase.getUserCarts(userId);
         for (Cart cart : userCarts) {
             if ("outstanding".equals(cart.getStatus())) {
                 throw new CartPendingPaymentException("There is a cart pending payment with ID: " + cart.getCartId());
             }
-        }
-        return cartRepository.createCart(userId);
-    }
-    private User retrieveUser(Integer userId) {
-        Userdb userdb = userRepository.findById(userId);
-        if (userdb!= null) {
-            return MapperUser.toUserDomain(userdb);
-        } else {
-            throw new UserNoExistException("User not found with ID: " + userId);
         }
     }
 }

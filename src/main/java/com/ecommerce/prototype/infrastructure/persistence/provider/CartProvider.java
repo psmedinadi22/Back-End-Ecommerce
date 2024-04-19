@@ -7,6 +7,7 @@ import com.ecommerce.prototype.application.usecase.exception.ProductAlreadyInCar
 import com.ecommerce.prototype.application.usecase.exception.ProductNotFoundException;
 import com.ecommerce.prototype.application.usecase.repository.CartRepository;
 import com.ecommerce.prototype.application.usecase.repository.ProductRepository;
+import com.ecommerce.prototype.application.usecase.repository.UserRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperCart;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Productdb;
@@ -23,7 +24,7 @@ public class CartProvider implements CartRepository {
 
     private final CartJPARepository cartJPARepository;
     private final ProductRepository productRepository;
-    private final UserProvider userProvider;
+    private final UserRepository userProvider;
 
     /**
      * Adds a product to a cart.
@@ -143,12 +144,10 @@ public class CartProvider implements CartRepository {
     @Override
     public String getCartStatus(int cartId) {
 
-        Optional<Cartdb> cartOptional = cartJPARepository.findById(cartId);
-        if (cartOptional.isPresent()) {
-            return cartOptional.get().getStatus();
-        } else {
-            throw new CartNotFoundException("Cart not found with ID: " + cartId);
-        }
+        Cartdb cartOptional = cartJPARepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException("Cart not found with ID: " + cartId));
+
+            return cartOptional.getStatus();
     }
 
     /**

@@ -1,27 +1,26 @@
 package com.ecommerce.prototype.endpoint;
 
-
 import com.ecommerce.prototype.application.domain.*;
 import com.ecommerce.prototype.application.usecase.*;
 import com.ecommerce.prototype.application.usecase.exception.CartNotFoundException;
+import com.ecommerce.prototype.application.usecase.exception.InvalidCredentialsException;
 import com.ecommerce.prototype.application.usecase.exception.PasswordLengthException;
 import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperUser;
+import com.ecommerce.prototype.infrastructure.client.request.AuthenticationRequest;
 import com.ecommerce.prototype.infrastructure.client.request.UserRequest;
 import com.ecommerce.prototype.infrastructure.client.response.UserResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 @RestController
 @AllArgsConstructor
 public class UserController {
@@ -31,7 +30,9 @@ public class UserController {
     private final GetUserCartsUseCase getUserCartsUseCase;
     private final GetUserTokenizedCartsUseCase getUserTokenizedCartsUseCase;
     private final GetUserOrdersUseCase getUserOrdersUseCase;
+    private final AuthenticateUserUseCase authenticateUserUseCase;
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     /**
      * Creates a new user.
      *
@@ -174,6 +175,24 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    /**
+     * Endpoint to authenticate a user using email and password.
+     *
+     * @param authenticationRequest The authentication request containing email and password.
+     * @return ResponseEntity with an authentication token if successful, or an error message if authentication fails.
+     */
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@RequestBody AuthenticationRequest authenticationRequest) {
+        try {
+            User authenticatedUser = authenticateUserUseCase.authenticateUser(authenticationRequest.getEmail(), authenticationRequest.getPassword());
+            return ResponseEntity.ok(authenticatedUser);
+        } catch (InvalidCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + e.getMessage());
         }
     }
 }

@@ -11,4 +11,6 @@ public interface UserRepository {
     boolean existsById(Integer userId);
     void deleteById(Integer userId);
     Userdb findById(Integer userId);
+
+    Optional<User> findByEmail(String email);
 }

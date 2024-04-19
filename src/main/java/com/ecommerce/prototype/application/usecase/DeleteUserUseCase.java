@@ -4,6 +4,8 @@ import com.ecommerce.prototype.application.usecase.exception.UserNoExistExceptio
 import com.ecommerce.prototype.application.usecase.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @AllArgsConstructor

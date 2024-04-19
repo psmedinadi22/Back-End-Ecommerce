@@ -1,9 +1,6 @@
 package com.ecommerce.prototype.infrastructure.persistence.provider;
 
-import com.ecommerce.prototype.application.domain.Email;
-import com.ecommerce.prototype.application.domain.Password;
 import com.ecommerce.prototype.application.domain.User;
-import com.ecommerce.prototype.application.usecase.exception.ProductNotFoundException;
 import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
 import com.ecommerce.prototype.application.usecase.repository.UserRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperUser;
@@ -79,6 +76,11 @@ public class UserProvider implements UserRepository {
     public Userdb findById(Integer userId) {
 
         return userJPARepository.findByUserId(userId);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return Optional.ofNullable(MapperUser.toUserDomain(userJPARepository.findByEmail(email)));
     }
 }
 

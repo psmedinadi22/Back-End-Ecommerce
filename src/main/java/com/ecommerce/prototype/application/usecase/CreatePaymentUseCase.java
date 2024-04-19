@@ -4,12 +4,9 @@ import com.ecommerce.prototype.application.domain.Order;
 import com.ecommerce.prototype.application.domain.Payment;
 import com.ecommerce.prototype.application.usecase.exception.OrderNotFoundException;
 import com.ecommerce.prototype.application.usecase.repository.PaymentRepository;
-import com.ecommerce.prototype.infrastructure.client.mappers.MapperOrder;
 import com.ecommerce.prototype.infrastructure.client.response.TransactionResponse;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Orderdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Paymentdb;
 import com.ecommerce.prototype.infrastructure.persistence.provider.OrderProvider;
-import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.OrderJPARepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +20,8 @@ public class CreatePaymentUseCase {
 
     private final PaymentRepository paymentRepository;
     private final OrderProvider orderProvider;
+    private static final Logger logger = LoggerFactory.getLogger(CreatePaymentUseCase.class);
+
 
     /**
      * Creates a new payment and saves it to the database.
@@ -35,6 +34,7 @@ public class CreatePaymentUseCase {
      */
     public Paymentdb createPayment(TransactionResponse transactionResponse, Integer orderId, String paymentMethod) {
 
+        logger.debug("Creating payment for order with ID {}", orderId);
         Order order = orderProvider.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with ID: " + orderId));
 
@@ -44,8 +44,7 @@ public class CreatePaymentUseCase {
         payment.setAmount(order.getTotalAmount());
         payment.setPaymentMethod(paymentMethod);
         payment.setPaymentStatus(transactionResponse.getState());
-       // payment.setOrder(order);
-
+        logger.info("Payment created successfully for order with ID {}", orderId);
         return paymentRepository.save(payment);
     }
 }

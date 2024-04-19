@@ -4,7 +4,8 @@ import com.ecommerce.prototype.application.domain.TokenizedCard;
 import com.ecommerce.prototype.application.usecase.repository.TokenizedCardRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 @AllArgsConstructor

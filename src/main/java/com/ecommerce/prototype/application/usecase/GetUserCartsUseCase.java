@@ -9,10 +9,10 @@ import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @AllArgsConstructor
 @Service

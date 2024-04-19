@@ -1,14 +1,18 @@
 package com.ecommerce.prototype.application.usecase;
 
+import com.ecommerce.prototype.application.domain.Cart;
 import com.ecommerce.prototype.application.domain.Product;
 import com.ecommerce.prototype.application.usecase.exception.CartStateException;
 import com.ecommerce.prototype.application.usecase.exception.InsufficientProductQuantityException;
 import com.ecommerce.prototype.application.usecase.repository.CartRepository;
+import com.ecommerce.prototype.infrastructure.client.mappers.MapperCart;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperProduct;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Productdb;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @Service
@@ -17,6 +21,8 @@ public class AddProductToCartUseCase {
 
     private GetProductUseCase getProductUseCase;
     private CartRepository cartRepository;
+    private static final Logger logger = LoggerFactory.getLogger(AddProductToCartUseCase.class);
+
 
     /**
      * Adds a product to the specified cart.
@@ -29,11 +35,14 @@ public class AddProductToCartUseCase {
      * @throws InsufficientProductQuantityException If the quantity of the product is insufficient.
      */
     public void addProductToCart(Integer productId, int quantity, int cartId) {
-        Cartdb cart = findCartById(cartId);
+
+        logger.info("Adding product with ID {} to cart with ID {}", productId, cartId);
+        Cart cart = MapperCart.mapToDomain(findCartById(cartId));
         checkCartStatus(cart.getStatus());
         Product product = MapperProduct.toProductDomain(findProductById(productId));
         validateProductQuantity(product, quantity);
         addToCart(product, quantity, cartId);
+        logger.info("Product with ID {} added to cart with ID {}", productId, cartId);
     }
 
     /**
@@ -44,6 +53,8 @@ public class AddProductToCartUseCase {
      * @throws IllegalArgumentException If the provided cart ID is invalid.
      */
     private Cartdb findCartById(int cartId) {
+
+        logger.debug("Finding cart with ID {}", cartId);
         return cartRepository.findById(cartId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found with ID: " + cartId));
     }
@@ -55,6 +66,8 @@ public class AddProductToCartUseCase {
      * @throws CartStateException If the cart status is not "outstanding".
      */
     private void checkCartStatus(String cartStatus) {
+
+        logger.debug("Checking cart status: {}", cartStatus);
         if (!"outstanding".equals(cartStatus)) {
             throw new CartStateException("Cannot add products to cart with status: " + cartStatus);
         }
@@ -68,6 +81,8 @@ public class AddProductToCartUseCase {
      * @throws IllegalArgumentException If the provided product ID is invalid.
      */
     private Productdb findProductById(Integer productId) {
+
+        logger.debug("Finding product with ID {}", productId);
         return getProductUseCase.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + productId));
     }
@@ -80,6 +95,8 @@ public class AddProductToCartUseCase {
      * @throws InsufficientProductQuantityException If the quantity of the product is insufficient.
      */
     private void validateProductQuantity(Product product, int quantity) {
+
+        logger.debug("Validating product quantity: {} for product with ID {}", quantity, product.getProductId());
         if (product.getQuantity() < quantity) {
             throw new InsufficientProductQuantityException("Insufficient quantity of product with ID: " + product.getProductId());
         }
@@ -93,7 +110,8 @@ public class AddProductToCartUseCase {
      * @param cartId The ID of the cart to add the product to.
      */
     private void addToCart(Product product, int quantity, int cartId) {
+
+        logger.debug("Adding product with ID {} and quantity {} to cart with ID {}", product.getProductId(), quantity, cartId);
         cartRepository.addProductToCart(product, quantity, cartId);
     }
-
 }

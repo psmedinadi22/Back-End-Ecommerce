@@ -2,7 +2,6 @@ package com.ecommerce.prototype.application.usecase;
 
 import com.ecommerce.prototype.application.domain.Card;
 import com.ecommerce.prototype.application.domain.User;
-import com.ecommerce.prototype.application.usecase.exception.PaymentProcessingException;
 import com.ecommerce.prototype.application.usecase.exception.TokenizationErrorException;
 import com.ecommerce.prototype.application.usecase.exception.UserDisabledException;
 import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
@@ -19,7 +18,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Optional;
 
 @AllArgsConstructor

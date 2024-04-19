@@ -4,11 +4,9 @@ import com.ecommerce.prototype.application.domain.*;
 import com.ecommerce.prototype.application.usecase.repository.OrderDetailRepository;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.OrderDetaildb;
 import lombok.AllArgsConstructor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import java.util.Date;
 
 
@@ -31,8 +29,6 @@ public class CreateOrderDetailUseCase {
      */
     public OrderDetaildb createOrderDetail(Order order, User user, Cart cart, String paymentMethod) {
 
-        logger.info("start createOrderDetail");
-
         OrderDetail orderDetail = new OrderDetail();
         orderDetail.setPurchaseDate(new Date());
         orderDetail.setTotalAmount(order.getTotalAmount());
@@ -48,7 +44,7 @@ public class CreateOrderDetailUseCase {
         orderDetail.setCart(cart);
         orderDetail.setOrder(order);
 
-        logger.info("start createOrderDetail: {}", orderDetail);
+        logger.info("Start creating Order Detail with ID: {}", orderDetail);
         return orderDetailRepository.createOrderDetail(orderDetail);
     }
 }

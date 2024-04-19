@@ -35,9 +35,7 @@ public class CreateOrderUseCase {
         order.setTotalAmount(totalAmount);
         order.setOrderStatus("PENDING");
         order.setUser(user);
-//        Payment payment = new Payment();
-//        payment.setPaymentStatus("PENDING");
-        logger.info("begin create order in repository");
+        logger.info("Start creating Order with User Id : {}", userId);
         return orderRepository.createOrder(order, userId);
     }
 

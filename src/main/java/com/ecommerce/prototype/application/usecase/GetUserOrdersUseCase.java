@@ -1,13 +1,10 @@
 package com.ecommerce.prototype.application.usecase;
 
-import com.ecommerce.prototype.application.domain.Cart;
 import com.ecommerce.prototype.application.domain.Order;
 import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
 import com.ecommerce.prototype.application.usecase.repository.OrderRepository;
 import com.ecommerce.prototype.application.usecase.repository.UserRepository;
-import com.ecommerce.prototype.infrastructure.client.mappers.MapperCart;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperOrder;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Orderdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
 import lombok.AllArgsConstructor;

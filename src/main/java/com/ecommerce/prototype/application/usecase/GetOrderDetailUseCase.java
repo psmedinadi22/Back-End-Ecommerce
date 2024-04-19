@@ -4,6 +4,8 @@ import com.ecommerce.prototype.application.domain.OrderDetail;
 import com.ecommerce.prototype.application.usecase.repository.OrderDetailRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
