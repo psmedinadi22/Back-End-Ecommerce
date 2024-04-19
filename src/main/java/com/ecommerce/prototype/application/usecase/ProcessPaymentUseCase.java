@@ -33,37 +33,38 @@ public class ProcessPaymentUseCase {
     private final OrderJPARepository orderJPARepository;
     private static final Logger logger = LoggerFactory.getLogger(ProcessPaymentUseCase.class);
 
+    /**
+     * Processes a payment request.
+     *
+     * @param paymentRequest The payment request containing necessary information.
+     * @return The payment response.
+     * @throws JsonProcessingException if there is an error processing JSON.
+     */
     public PaymentResponse processPayment(PaymentRequest paymentRequest) throws JsonProcessingException {
+
+        logger.info("Processing payment for request: {}", paymentRequest);
 
         User user = retrieveUser(paymentRequest.getUserId());
         TokenizedCarddb tokenizedCard = verifyTokenizedCard(paymentRequest.getTokenizedCardId(), paymentRequest.getUserId());
         Cart cart = retrieveCart(paymentRequest.getCartId(), paymentRequest.getUserId());
-        logger.info("begin create order");
+
         Order order = createOrder(cart, user);
-        logger.info("begin response");
-        PaymentResponse response = processPayment(user,(int) order.getTotalAmount(),
+        OrderDetail orderDetail = createOrderDetail(order, user, cart, paymentRequest.getPaymentMethod());
+
+        PaymentResponse paymentResponse = processPayment(user,(int) order.getTotalAmount(),
                 tokenizedCard.getCreditCardTokenId(),
                 paymentRequest);
-        logger.info("made response");
-        response.setOrderId(order.getOrderID());
-        logger.info("set orderId to response");
-        OrderDetail orderDetail = createOrderDetail(order, user, cart, paymentRequest.getPaymentMethod());
-        response.setOrderDetailId(orderDetail.getOrderDetailId());
-        logger.info("set orderdetailId to response");
-        Paymentdb paymentdb = createPaymentUseCase.createPayment(response.getTransactionResponse(), order.getOrderID(), paymentRequest.getPaymentMethod());
-        logger.info("created payment");
-        response.setPaymentId(paymentdb.getPaymentID());
-//        Payment payment = MapperPayment.mapToDomain(paymentdb);
-        logger.info("payment mapped");
-//        order.setPayment(payment);
-//        logger.info("begin saving payment in ord");
-//        Orderdb orderdb = MapperOrder.mapToModel(order);
-//        logger.info("begin saving payment in ord, mapper");
-//        orderJPARepository.save(orderdb);
-        logger.info("set PaymnetId to response");
-        updateStatus(order, cart, orderDetail, response);
 
-        return response;
+        Paymentdb paymentdb = createPaymentUseCase.createPayment(paymentResponse.getTransactionResponse(), order.getOrderID(), paymentRequest.getPaymentMethod());
+
+        paymentResponse.setOrderId(order.getOrderID());
+        paymentResponse.setPaymentId(paymentdb.getPaymentID());
+        paymentResponse.setOrderDetailId(orderDetail.getOrderDetailId());
+
+        updateStatus(order, cart, orderDetail, paymentResponse);
+
+        logger.info("Payment processed successfully with response: {}", paymentResponse);
+        return paymentResponse;
     }
 
 
@@ -75,6 +76,8 @@ public class ProcessPaymentUseCase {
      * @throws PaymentProcessingException If the tokenized card is not found.
      */
     private TokenizedCarddb verifyTokenizedCard(Integer tokenizedCardId, Integer userId) {
+
+        logger.info("Verifying tokenized card with ID: {} for user ID: {}", tokenizedCardId, userId);
 
         TokenizedCarddb tokenizedCarddb = tokenizedCardRepository.findById(tokenizedCardId)
                 .orElseThrow(() -> new PaymentProcessingException("Tokenized card not found with ID: " + tokenizedCardId));
@@ -93,6 +96,8 @@ public class ProcessPaymentUseCase {
      * @throws OrderNotFoundException If the cart with the specified ID is not found.
      */
     private Cart retrieveCart(Integer cartId, Integer userId) {
+
+        logger.info("Retrieving cart with ID: {} for user ID: {}", cartId, userId);
         Cart cart = MapperCart.mapToDomain(cartRepository.findById(cartId)
                 .orElseThrow(() -> new CartNotFoundException("Cart not found with ID: " + cartId)));
 
@@ -114,6 +119,9 @@ public class ProcessPaymentUseCase {
      * @return The retrieved user.
      */
     private User retrieveUser(Integer userId) {
+
+        logger.info("Retrieving user with ID: {}", userId);
+
         Userdb userdb = userRepository.findById(userId);
         if (userdb!= null) {
             if (userdb.getIsDeleted()) {
@@ -135,6 +143,8 @@ public class ProcessPaymentUseCase {
      */
     private Order createOrder(Cart cart, User user) {
 
+        logger.info("Creating order for user ID: {}", user.getUserId());
+
         return createOrderUseCase.createOrder(cart, user.getUserId());
     }
 
@@ -148,11 +158,16 @@ public class ProcessPaymentUseCase {
      * @return The created order detail.
      */
     private OrderDetail createOrderDetail(Order order, User user, Cart cart, String paymentMethod) {
+
+        logger.info("Creating order detail for order ID: {}", order.getOrderID());
+
         return MapperOrderDetail.mapToDomain(createOrderDetailUseCase.createOrderDetail(order, user, cart, paymentMethod));
     }
 
 
     private PaymentResponse processPayment(User user, int totalAmount, String creditCardTokenId, PaymentRequest paymentRequest) throws JsonProcessingException {
+
+        logger.info("Processing payment for user ID: {}", user.getUserId());
 
         PaymentService paymentService = new PaymentService();
         return paymentService.processPayment(user, totalAmount, creditCardTokenId, paymentRequest);
@@ -167,6 +182,8 @@ public class ProcessPaymentUseCase {
      * @param response The payment response.
      */
     private void updateStatus(Order order, Cart cart, OrderDetail orderDetail, PaymentResponse response) {
+
+        logger.info("Updating status for order ID: {}", order.getOrderID());
 
         String purchaseStatus = response.getCode().equals("SUCCESS") ? response.getTransactionResponse().getState() : "ERROR";
         orderDetail.setPurchaseStatus(purchaseStatus);
@@ -192,6 +209,8 @@ public class ProcessPaymentUseCase {
      */
     public void  updateInventory(Cart cart) {
 
+        logger.info("Updating inventory for cart ID: {}", cart.getCartId());
+
         List<Product> products = cart.getProducts();
         List<Integer> quantities = cart.getProductsQuantity();
 
@@ -203,9 +222,11 @@ public class ProcessPaymentUseCase {
                     .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + product.getProductId()));
 
             int updatedQuantity = productdb.getQuantity() - quantityInCart;
+
             if (updatedQuantity < 0) {
                 throw new InsufficientProductQuantityException("Insufficient quantity for product with ID: " + product.getProductId());
             }
+
             updateProductQuantityUseCase.updateProductQuantity(product.getProductId(), updatedQuantity);
             productRepository.save(MapperProduct.toProductDomain(productdb));
         }

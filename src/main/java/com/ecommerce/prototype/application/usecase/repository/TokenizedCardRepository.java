@@ -16,4 +16,6 @@ public interface TokenizedCardRepository {
     Optional<TokenizedCarddb> createTokenizedCard(TokenizationResponse tokenizedCard, Integer userId);
 
     List<TokenizedCard> findByUserId(Integer userId);
+
+    void delete(TokenizedCarddb tokenizedCarddb);
 }

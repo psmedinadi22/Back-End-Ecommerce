@@ -8,7 +8,6 @@ import com.ecommerce.prototype.infrastructure.client.mappers.MapperProduct;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Productdb;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor

@@ -64,4 +64,8 @@ public class TokenizedCardProvider implements TokenizedCardRepository {
         }
     }
 
+    @Override
+    public void delete(TokenizedCarddb tokenizedCarddb) {
+        tokenizedCardJPARepository.delete(tokenizedCarddb);
+    }
 }
