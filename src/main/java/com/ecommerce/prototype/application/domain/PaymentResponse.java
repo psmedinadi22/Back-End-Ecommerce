@@ -11,6 +11,7 @@ public class PaymentResponse {
 
 	private String id;
 	private String status;
+	private String state;
 	private String error;
 	private String message;
 	private Order order;

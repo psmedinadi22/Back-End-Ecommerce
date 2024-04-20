@@ -49,7 +49,10 @@ public class ProcessPaymentUseCase {
 
         var paymentResponse = externalPlatformRepository.doPayment(order);
 
+
+
         var payment = paymentRepository.createPayment(paymentResponse);
+
 
         logger.info("Payment processed successfully with response: {}", paymentResponse);
 

@@ -43,8 +43,11 @@ public class PayUProvider implements ExternalPlatformRepository {
 			try {
 				var payuResponse = objectMapper.readValue(responseBody, PayUResponse.class);
 
+				// APPROVED, DECLINED, ERROR, PENDING
+
 				return Optional.of(PaymentResponse.builder()
 												  .withStatus("SUCCESS")
+										   .withState(payuResponse.getTransactionResponse().getState().equals("APPROVED") ? "ENTREGAR_PRODUCTO" : "")
 												  .withExternalId(payuResponse.getTransactionResponse().getTransactionId())
 												  .withExternalState(payuResponse.getTransactionResponse().getState())
 												  .withCreationDate(payuResponse.getTransactionResponse().getOperationDate())
