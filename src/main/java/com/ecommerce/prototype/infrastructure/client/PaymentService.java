@@ -1,8 +1,19 @@
 package com.ecommerce.prototype.infrastructure.client;
 
 import com.ecommerce.prototype.application.domain.User;
+import com.ecommerce.prototype.infrastructure.client.payu.provider.request.AdditionalValueRequest;
+import com.ecommerce.prototype.infrastructure.client.payu.request.AdditionalValuesRequest;
+import com.ecommerce.prototype.infrastructure.client.payu.request.BillingAddressRequest;
+import com.ecommerce.prototype.infrastructure.client.payu.request.BuyerRequest;
+import com.ecommerce.prototype.infrastructure.client.payu.request.Merchant;
+import com.ecommerce.prototype.infrastructure.client.payu.request.OrderRequest;
+import com.ecommerce.prototype.infrastructure.client.payu.request.PayerRequest;
+import com.ecommerce.prototype.infrastructure.client.payu.request.PaymentAPIRequest;
+import com.ecommerce.prototype.infrastructure.client.payu.request.PaymentRequest;
+import com.ecommerce.prototype.infrastructure.client.payu.request.ShippingAddressRequest;
+import com.ecommerce.prototype.infrastructure.client.payu.request.TransactionRequest;
 import com.ecommerce.prototype.infrastructure.client.request.*;
-import com.ecommerce.prototype.infrastructure.client.response.PaymentResponse;
+import com.ecommerce.prototype.infrastructure.client.payu.response.PayUResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -30,7 +41,7 @@ public class PaymentService {
      * @return PaymentResponse The response of the payment process.
      * @throws JsonProcessingException If there is an error processing JSON.
      */
-    public PaymentResponse processPayment(User user, int totalAmount, String creditCardTokenId, PaymentRequest paymentRequest) throws JsonProcessingException {
+    public PayUResponse processPayment(User user, int totalAmount, String creditCardTokenId, PaymentRequest paymentRequest) throws JsonProcessingException {
 
         PaymentAPIRequest apiRequest = buildPaymentRequest(user, totalAmount, creditCardTokenId, paymentRequest.getPaymentMethod(), paymentRequest);
         logger.info(String.valueOf(apiRequest));
@@ -43,7 +54,7 @@ public class PaymentService {
             String responseBody = responseEntity.getBody();
             logger.info("Response body: {}", responseBody);
 
-            return objectMapper.readValue(responseBody, PaymentResponse.class);
+            return objectMapper.readValue(responseBody, PayUResponse.class);
         } else {
             //TODO: MAS INFO EN LOS ERRORES, PONER MIS PROPIAS EXCEPCIONES
             throw new RuntimeException("Error processing payment");

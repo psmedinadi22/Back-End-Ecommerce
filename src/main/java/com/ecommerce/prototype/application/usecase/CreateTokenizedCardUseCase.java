@@ -5,21 +5,20 @@ import com.ecommerce.prototype.application.domain.User;
 import com.ecommerce.prototype.application.usecase.exception.TokenizationErrorException;
 import com.ecommerce.prototype.application.usecase.exception.UserDisabledException;
 import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
-import com.ecommerce.prototype.application.usecase.repository.TokenizedCardRepository;
+import com.ecommerce.prototype.application.usecase.repository.CardRepository;
 import com.ecommerce.prototype.application.usecase.repository.UserRepository;
-import com.ecommerce.prototype.infrastructure.client.TokenizationService;
+import com.ecommerce.prototype.infrastructure.client.PayuConfig;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperTokenizedCard;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperUser;
-import com.ecommerce.prototype.infrastructure.client.request.TokenizationRequest;
-import com.ecommerce.prototype.infrastructure.client.response.TokenizationResponse;
+import com.ecommerce.prototype.infrastructure.client.payu.request.TokenizationRequest;
+import com.ecommerce.prototype.infrastructure.client.payu.response.TokenizationResponse;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.TokenizedCarddb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -27,9 +26,9 @@ import java.util.Optional;
 public class CreateTokenizedCardUseCase {
 
     @Autowired
-    private  TokenizedCardRepository tokenizedCardRepository;
+    private CardRepository cardRepository;
     @Autowired
-    private TokenizationService tokenizationService;
+    private PayuConfig payuConfig;
     private UserRepository userRepository;
 
     /**
@@ -50,11 +49,11 @@ public class CreateTokenizedCardUseCase {
 
         TokenizationRequest tokenizedCardRequest = MapperTokenizedCard.toTokenizedCardRequest(card, userId);
 
-        TokenizationResponse tokenizedCard = tokenizationService.tokenizeCard(tokenizedCardRequest);
+        TokenizationResponse tokenizedCard = payuConfig.tokenizeCard(tokenizedCardRequest);
 
         if ("SUCCESS".equals(tokenizedCard.getCode())) {
-            TokenizedCarddb tokenizedCarddb = tokenizedCardRepository.createTokenizedCard(tokenizedCard, userId)
-                    .orElseThrow(() -> new TokenizationErrorException("Tokenization error"));
+            TokenizedCarddb tokenizedCarddb = cardRepository.createTokenizedCard(tokenizedCard, userId)
+															.orElseThrow(() -> new TokenizationErrorException("Tokenization error"));
 
             tokenizedCard.setTokenizationResponseId(tokenizedCarddb.getId());
             return Optional.of(tokenizedCard);

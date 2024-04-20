@@ -4,7 +4,7 @@ import lombok.*;
 
 @Getter
 @Setter
-@Builder
+@Builder(setterPrefix = "with")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product {
@@ -17,7 +17,6 @@ public class Product {
     private int quantity;
     private boolean deleted = false;
 
-//TODO: APLICAR DRY
     /**
      * Validates the data of a product.
      *

@@ -16,5 +16,5 @@ public interface OrderRepository {
 
     List<Orderdb> findByUserId(Integer userId);
 
-    Order createOrder(Order order, Integer userId);
+    Order createOrder(Order order, Integer buyerId);
 }

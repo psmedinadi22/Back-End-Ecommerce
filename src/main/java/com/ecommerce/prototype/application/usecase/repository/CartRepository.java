@@ -14,7 +14,7 @@ public interface CartRepository {
 
     Optional<Cart> createCart(Integer userId);
 
-    Optional<Cartdb> findById(int cartId);
+    Optional<Cart> findById(int cartId);
 
     void save(Cartdb cartdb);
 

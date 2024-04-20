@@ -3,10 +3,12 @@ package com.ecommerce.prototype.infrastructure.persistence.provider;
 import com.ecommerce.prototype.application.domain.Order;
 import com.ecommerce.prototype.application.usecase.ProcessPaymentUseCase;
 import com.ecommerce.prototype.application.usecase.exception.OrderNotFoundException;
+import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
 import com.ecommerce.prototype.application.usecase.repository.OrderRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperOrder;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Orderdb;
 import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.OrderJPARepository;
+import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.UserJPARepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +22,7 @@ import java.util.Optional;
 public class OrderProvider implements OrderRepository {
 
     private final OrderJPARepository orderJPARepository;
-    private final UserProvider userProvider;
+    private final UserJPARepository userJPARepository;
     private static final Logger logger = LoggerFactory.getLogger(OrderProvider.class);
 
     /**
@@ -85,14 +87,18 @@ public class OrderProvider implements OrderRepository {
      * Creates a new order and associates it with the specified user ID.
      *
      * @param order The order to be created.
-     * @param userId The unique identifier of the user to whom the order is associated.
+     * @param buyerId The unique identifier of the user to whom the order is associated.
      * @return Order The newly created order.
      */
     @Override
-    public Order createOrder(Order order, Integer userId) {
+    public Order createOrder(Order order, Integer buyerId) {
 
         Orderdb orderdb = MapperOrder.mapToModel(order);
-        orderdb.setUser(userProvider.findById(userId));
+
+        var user = userJPARepository.findById(buyerId)
+                                    .orElseThrow(() -> new UserNoExistException("The user not found in database"));
+
+        orderdb.setUser(user);
         orderdb = orderJPARepository.save(orderdb);
 
         return MapperOrder.mapToDomain(orderdb);

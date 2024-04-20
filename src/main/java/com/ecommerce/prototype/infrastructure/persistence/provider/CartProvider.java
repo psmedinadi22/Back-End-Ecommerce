@@ -52,7 +52,7 @@ public class CartProvider implements CartRepository {
             throw new ProductAlreadyInCartException("Product with ID " + product.getProductId() + " is already in the cart");
         }
         cartdb.getProducts().add(productdb);
-        cartdb.getProductsQuantity().add(quantity);
+        cartdb.getProductQuantities().add(quantity);
         cartJPARepository.save(cartdb);
     }
 
@@ -79,8 +79,8 @@ public class CartProvider implements CartRepository {
         cart.getProducts().remove(existingProduct);
 
 
-        if (index != -1 && index < cart.getProductsQuantity().size()) {
-            cart.getProductsQuantity().remove(index);
+        if (index != -1 && index < cart.getProductQuantities().size()) {
+            cart.getProductQuantities().remove(index);
         } else {
             throw new ProductNotFoundException("Product quantity not found in cart");
         }
@@ -100,7 +100,7 @@ public class CartProvider implements CartRepository {
 
         Cartdb cartdb = new Cartdb();
         cartdb.setStatus("outstanding");
-        cartdb.setUser(userProvider.findById(userId));
+        cartdb.setUser(userProvider.findBayerById(userId));
         cartdb = cartJPARepository.save(cartdb);
 
         Cart savedCart =new Cart(
@@ -118,9 +118,10 @@ public class CartProvider implements CartRepository {
      * @return Optional of Cartdb.
      */
     @Override
-    public Optional<Cartdb> findById(int cartId) {
+    public Optional<Cart> findById(int cartId) {
 
-        return cartJPARepository.findById(cartId);
+        return cartJPARepository.findById(cartId)
+                                .map(Cartdb::toCart);
     }
 
     /**

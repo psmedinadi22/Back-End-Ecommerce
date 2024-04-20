@@ -1,6 +1,5 @@
 package com.ecommerce.prototype.application.usecase.repository;
 
-import com.ecommerce.prototype.application.domain.OrderDetail;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.OrderDetaildb;
 
 import java.util.Optional;

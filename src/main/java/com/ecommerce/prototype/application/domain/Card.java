@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-@Builder
+@Builder(setterPrefix = "with")
 public class Card {
 
     private Integer payerId;
@@ -18,4 +18,5 @@ public class Card {
     private String paymentMethod;
     private String number;
     private String expirationDate;
+    private String tokenId;
 }

@@ -5,13 +5,13 @@ import com.ecommerce.prototype.application.usecase.exception.*;
 import com.ecommerce.prototype.application.usecase.repository.*;
 import com.ecommerce.prototype.infrastructure.client.PaymentService;
 import com.ecommerce.prototype.infrastructure.client.mappers.*;
-import com.ecommerce.prototype.infrastructure.client.request.PaymentRequest;
-import com.ecommerce.prototype.infrastructure.client.response.PaymentResponse;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.*;
 import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.OrderJPARepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +20,8 @@ import org.slf4j.LoggerFactory;
 @AllArgsConstructor
 public class ProcessPaymentUseCase {
 
-    private final TokenizedCardRepository tokenizedCardRepository;
+    private final CardRepository cardRepository;
     private final CartRepository cartRepository;
-    private final CreateOrderUseCase createOrderUseCase;
-    private final CreateOrderDetailUseCase createOrderDetailUseCase;
     private final UserRepository userRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final OrderRepository orderRepository;
@@ -31,40 +29,31 @@ public class ProcessPaymentUseCase {
     private final CreatePaymentUseCase createPaymentUseCase;
     private final UpdateProductQuantityUseCase updateProductQuantityUseCase;
     private final OrderJPARepository orderJPARepository;
+    private final ExternalPlatformRepository externalPlatformRepository;
     private static final Logger logger = LoggerFactory.getLogger(ProcessPaymentUseCase.class);
 
     /**
      * Processes a payment request.
      *
-     * @param paymentRequest The payment request containing necessary information.
      * @return The payment response.
-     * @throws JsonProcessingException if there is an error processing JSON.
      */
-    public PaymentResponse processPayment(PaymentRequest paymentRequest) throws JsonProcessingException {
+    public PaymentResponse processPayment(Payment payment) {
 
-        logger.info("Processing payment for request: {}", paymentRequest);
+        logger.info("Processing payment for request with payment method : {} will init", payment.getPaymentMethod());
 
-        User user = retrieveUser(paymentRequest.getUserId());
-        TokenizedCarddb tokenizedCard = verifyTokenizedCard(paymentRequest.getTokenizedCardId(), paymentRequest.getUserId());
-        Cart cart = retrieveCart(paymentRequest.getCartId(), paymentRequest.getUserId());
+        var buyer = getBuyer(payment.getBuyer().getId());
+        var card = verifyTokenizedCard(payment.getTokenId(), buyer.getId());
+        var cart = getCart(payment.getCartId(), buyer.getId());
 
-        Order order = createOrder(cart, user);
-        OrderDetail orderDetail = createOrderDetail(order, user, cart, paymentRequest.getPaymentMethod());
+        var order = createOrder(cart, buyer, card);
 
-        PaymentResponse paymentResponse = processPayment(user,(int) order.getTotalAmount(),
-                tokenizedCard.getCreditCardTokenId(),
-                paymentRequest);
+        var paymentResponse = externalPlatformRepository.doPayment(order);
 
-        Paymentdb paymentdb = createPaymentUseCase.createPayment(paymentResponse.getTransactionResponse(), order.getOrderID(), paymentRequest.getPaymentMethod());
-
-        paymentResponse.setOrderId(order.getOrderID());
-        paymentResponse.setPaymentId(paymentdb.getPaymentID());
-        paymentResponse.setOrderDetailId(orderDetail.getOrderDetailId());
-
-        updateStatus(order, cart, orderDetail, paymentResponse);
+        var payment = paymentRepository.createPayment(paymentResponse);
 
         logger.info("Payment processed successfully with response: {}", paymentResponse);
-        return paymentResponse;
+
+        return payment;
     }
 
 
@@ -75,17 +64,18 @@ public class ProcessPaymentUseCase {
      * @return The tokenized card if found.
      * @throws PaymentProcessingException If the tokenized card is not found.
      */
-    private TokenizedCarddb verifyTokenizedCard(Integer tokenizedCardId, Integer userId) {
+    private Card verifyTokenizedCard(Integer tokenizedCardId, Integer userId) {
 
         logger.info("Verifying tokenized card with ID: {} for user ID: {}", tokenizedCardId, userId);
 
-        TokenizedCarddb tokenizedCarddb = tokenizedCardRepository.findById(tokenizedCardId)
+        var card = cardRepository.findById(tokenizedCardId)
                 .orElseThrow(() -> new PaymentProcessingException("Tokenized card not found with ID: " + tokenizedCardId));
 
-        if (!tokenizedCarddb.getUser().getUserId().equals(userId)) {
+        if ( !card.getPayerId().equals(userId) ) {
             throw new UnauthorizedCartAccessException("The Tokenized Card does not belong to the user.");
         }
-        return  tokenizedCarddb;
+
+        return card;
     }
 
     /**
@@ -95,17 +85,18 @@ public class ProcessPaymentUseCase {
      * @return The retrieved cart.
      * @throws OrderNotFoundException If the cart with the specified ID is not found.
      */
-    private Cart retrieveCart(Integer cartId, Integer userId) {
+    private Cart getCart(Integer cartId, Integer buyerId) {
 
-        logger.info("Retrieving cart with ID: {} for user ID: {}", cartId, userId);
-        Cart cart = MapperCart.mapToDomain(cartRepository.findById(cartId)
-                .orElseThrow(() -> new CartNotFoundException("Cart not found with ID: " + cartId)));
+        logger.info("Retrieving cart with ID: {} for user ID: {}", cartId, buyerId);
 
-        if (!cart.getUser().getUserId().equals(userId)) {
+        Cart cart = cartRepository.findById(cartId)
+                                  .orElseThrow(() -> new CartNotFoundException("Cart not found with ID: " + cartId));
+
+        if ( !cart.getBuyer().getId().equals(buyerId) ) {
             throw new UnauthorizedCartAccessException("The cart does not belong to the user.");
         }
 
-        if (!cart.getStatus().equals("outstanding")) {
+        if ( !cart.getStatus().equals("outstanding") ) {
             throw new CartStateException("Cannot process payment for a cart with status: " + cart.getStatus());
         }
 
@@ -115,22 +106,18 @@ public class ProcessPaymentUseCase {
     /**
      * Retrieves the user associated with the provided ID.
      *
-     * @param userId The ID of the user to retrieve.
+     * @param buyerId The ID of the user to retrieve.
      * @return The retrieved user.
      */
-    private User retrieveUser(Integer userId) {
+    private Buyer getBuyer(Integer buyerId) {
 
-        logger.info("Retrieving user with ID: {}", userId);
+        logger.info("Getting user with ID: {}", buyerId);
 
-        Userdb userdb = userRepository.findById(userId);
-        if (userdb!= null) {
-            if (userdb.getIsDeleted()) {
-                throw new UserDisabledException("The user with ID: " + userId + " is disabled.");
-            }
-            return MapperUser.toUserDomain(userdb);
-        } else {
-            throw new UserNoExistException("User not found with ID: " + userId);
-        }
+        var buyer = userRepository.findBuyerById((buyerId));
+
+        if ( buyer != null && buyer.getIsDeleted() ) {
+            throw new UserDisabledException("The buyer with ID: " + buyerId + " is disabled.");
+        } else return buyer;
     }
 
 
@@ -138,31 +125,43 @@ public class ProcessPaymentUseCase {
      * Creates an order based on the provided cart and user information.
      *
      * @param cart The cart associated with the order.
-     * @param user The user associated with the order.
+     * @param buyer The user associated with the order.
      * @return The created order.
      */
-    private Order createOrder(Cart cart, User user) {
+    private Order createOrder(Cart cart, Buyer buyer, Card card) {
 
-        logger.info("Creating order for user ID: {}", user.getUserId());
+        logger.info("Creating order for user ID: {}", buyer.getId());
 
-        return createOrderUseCase.createOrder(cart, user.getUserId());
+        double totalAmount = calculateTotalAmount(cart);
+
+        var order = Order.builder()
+                         .withCreationDate(new Date())
+                         .withBuyer(buyer)
+                         .withOrderStatus("PENDING")
+                         .withTotalAmount(totalAmount)
+                         .withCart(cart)
+                         .withCard(card)
+                         .build();
+
+        logger.info("Start creating Order with User Id : {}", buyer.getId());
+
+        return orderRepository.createOrder(order, buyer.getId());
     }
 
-    /**
-     * Creates an order detail for the provided order, user, cart, and payment method.
-     *
-     * @param order The order associated with the order detail.
-     * @param user The user associated with the order detail.
-     * @param cart The cart associated with the order detail.
-     * @param paymentMethod The payment method associated with the order detail.
-     * @return The created order detail.
-     */
-    private OrderDetail createOrderDetail(Order order, User user, Cart cart, String paymentMethod) {
+    private double calculateTotalAmount(Cart cart) {
 
-        logger.info("Creating order detail for order ID: {}", order.getOrderID());
+        double totalAmount = 0.0;
+        List<Product> products = cart.getProducts();
+        List<Integer> quantities = cart.getProductsQuantity();
 
-        return MapperOrderDetail.mapToDomain(createOrderDetailUseCase.createOrderDetail(order, user, cart, paymentMethod));
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            int quantity = quantities.get(i);
+            totalAmount += product.getPrice() * quantity;
+        }
+        return totalAmount;
     }
+
 
 
     private PaymentResponse processPayment(User user, int totalAmount, String creditCardTokenId, PaymentRequest paymentRequest) throws JsonProcessingException {

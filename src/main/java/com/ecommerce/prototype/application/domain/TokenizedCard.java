@@ -7,7 +7,7 @@ import java.util.Date;
 @Getter
 @Setter
 @AllArgsConstructor
-@Builder
+@Builder(setterPrefix = "with")
 @NoArgsConstructor
 public class TokenizedCard {
 
@@ -21,4 +21,5 @@ public class TokenizedCard {
     private Date creationDate;
     private String maskedNumber;
     private String errorDescription;
+    private Buyer buyer;
 }

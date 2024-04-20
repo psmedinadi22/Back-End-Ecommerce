@@ -1,17 +1,10 @@
 package com.ecommerce.prototype.infrastructure.persistence.provider;
 
-import com.ecommerce.prototype.application.domain.Order;
-import com.ecommerce.prototype.application.domain.OrderDetail;
-import com.ecommerce.prototype.application.usecase.ProcessPaymentUseCase;
 import com.ecommerce.prototype.application.usecase.exception.OrderNotFoundException;
 import com.ecommerce.prototype.application.usecase.repository.OrderDetailRepository;
-import com.ecommerce.prototype.application.usecase.repository.OrderRepository;
-import com.ecommerce.prototype.infrastructure.client.mappers.MapperOrder;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperOrderDetail;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.OrderDetaildb;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Orderdb;
 import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.OrderDetailJPARepository;
-import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.OrderJPARepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

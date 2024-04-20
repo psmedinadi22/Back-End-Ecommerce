@@ -2,14 +2,10 @@ package com.ecommerce.prototype.infrastructure.client.mappers;
 
 import com.ecommerce.prototype.application.domain.Card;
 import com.ecommerce.prototype.application.domain.TokenizedCard;
-import com.ecommerce.prototype.infrastructure.client.request.TokenizationRequest;
-import com.ecommerce.prototype.infrastructure.client.response.CreditCardToken;
-import com.ecommerce.prototype.infrastructure.client.response.TokenizationResponse;
+import com.ecommerce.prototype.infrastructure.client.payu.request.TokenizationRequest;
+import com.ecommerce.prototype.infrastructure.client.payu.response.CreditCardToken;
+import com.ecommerce.prototype.infrastructure.client.payu.response.TokenizationResponse;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.TokenizedCarddb;
-
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 
 public class MapperTokenizedCard {
 

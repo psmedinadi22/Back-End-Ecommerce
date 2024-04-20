@@ -1,7 +1,7 @@
 package com.ecommerce.prototype.infrastructure.client.mappers;
 
 import com.ecommerce.prototype.application.domain.*;
-import com.ecommerce.prototype.infrastructure.client.request.UserRequest;
+import com.ecommerce.prototype.infrastructure.client.payu.request.UserRequest;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Orderdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.TokenizedCarddb;

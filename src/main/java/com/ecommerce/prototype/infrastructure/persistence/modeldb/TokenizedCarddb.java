@@ -1,5 +1,6 @@
 package com.ecommerce.prototype.infrastructure.persistence.modeldb;
 
+import com.ecommerce.prototype.application.domain.Card;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,19 @@ public class TokenizedCarddb {
         this.paymentMethod = paymentMethod;
         this.maskedNumber = maskedNumber;
         this.expirationDate = expirationDate;
+    }
+
+    public Card toCard() {
+
+        return Card.builder()
+                   .withNumber(this.maskedNumber)
+                   .withName(this.name)
+                   .withExpirationDate(this.expirationDate)
+                   .withPayerId(Integer.parseInt(this.payerId))
+                   .withIdentificationNumber(this.identificationNumber)
+                   .withPaymentMethod(this.paymentMethod)
+                   .withTokenId(this.creditCardTokenId)
+                   .build();
     }
 
 }

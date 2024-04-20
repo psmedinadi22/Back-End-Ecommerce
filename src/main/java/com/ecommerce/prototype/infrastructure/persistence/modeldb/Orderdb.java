@@ -1,5 +1,6 @@
 package com.ecommerce.prototype.infrastructure.persistence.modeldb;
 
+import com.ecommerce.prototype.application.domain.Order;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

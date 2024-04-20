@@ -1,6 +1,5 @@
 package com.ecommerce.prototype.infrastructure.client.mappers;
 
-import com.ecommerce.prototype.application.domain.OrderDetail;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.OrderDetaildb;
 
 public class MapperOrderDetail {

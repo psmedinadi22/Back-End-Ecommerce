@@ -1,17 +1,16 @@
 package com.ecommerce.prototype.application.usecase;
 
 import com.ecommerce.prototype.application.domain.TokenizedCard;
-import com.ecommerce.prototype.application.usecase.repository.TokenizedCardRepository;
+import com.ecommerce.prototype.application.usecase.repository.CardRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 @AllArgsConstructor
 @Service
 public class GetUserTokenizedCartsUseCase {
-    private final TokenizedCardRepository tokenizedCartRepository;
+    private final CardRepository tokenizedCartRepository;
 
     /**
      * Retrieves tokenized carts for a given user.

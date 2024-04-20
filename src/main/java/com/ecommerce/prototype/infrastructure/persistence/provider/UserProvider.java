@@ -1,5 +1,6 @@
 package com.ecommerce.prototype.infrastructure.persistence.provider;
 
+import com.ecommerce.prototype.application.domain.Buyer;
 import com.ecommerce.prototype.application.domain.User;
 import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
 import com.ecommerce.prototype.application.usecase.repository.UserRepository;
@@ -73,7 +74,14 @@ public class UserProvider implements UserRepository {
      * @return The user if found, otherwise null.
      */
     @Override
-    public Userdb findById(Integer userId) {
+    public Buyer findBuyerById(Integer buyerId) {
+
+        return userJPARepository.findByUserId(buyerId)
+                                .toBuyer();
+    }
+
+    @Override
+    public User findUserById(Integer userId) {
 
         return userJPARepository.findByUserId(userId);
     }

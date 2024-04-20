@@ -1,9 +1,7 @@
 package com.ecommerce.prototype.infrastructure.client.mappers;
 
-import com.ecommerce.prototype.application.domain.Cart;
 import com.ecommerce.prototype.application.domain.Product;
-import com.ecommerce.prototype.infrastructure.client.request.ProductRequest;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
+import com.ecommerce.prototype.infrastructure.client.payu.request.ProductRequest;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Productdb;
 
 public class MapperProduct {

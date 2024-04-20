@@ -1,22 +1,18 @@
 package com.ecommerce.prototype.application.domain;
 
-
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import java.util.List;
 @Getter
-@Setter
-@Builder
+@Builder(setterPrefix = "with")
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Cart {
 
     private Integer cartId;
     private List<Product> products;
-    private List<Integer> productsQuantity;
+    private List<Integer> productQuantities;
     private String status;
-    private User user;
+    private Buyer buyer;
 
     public Cart(Integer cartId, String status) {
         this.cartId = cartId;

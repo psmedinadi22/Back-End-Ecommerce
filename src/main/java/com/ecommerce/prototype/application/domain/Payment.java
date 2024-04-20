@@ -1,11 +1,13 @@
 package com.ecommerce.prototype.application.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.Date;
 
 @Getter
 @Setter
+@Builder(setterPrefix = "with")
 public class Payment {
 
     private Integer paymentID;
@@ -14,5 +16,7 @@ public class Payment {
     private double amount;
     private String paymentMethod;
     private String paymentStatus;
-  //  private  Order order;
+    private Integer tokenId;
+    private Buyer buyer;
+    private Integer cartId;
 }

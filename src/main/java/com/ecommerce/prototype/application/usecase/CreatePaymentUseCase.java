@@ -4,7 +4,7 @@ import com.ecommerce.prototype.application.domain.Order;
 import com.ecommerce.prototype.application.domain.Payment;
 import com.ecommerce.prototype.application.usecase.exception.OrderNotFoundException;
 import com.ecommerce.prototype.application.usecase.repository.PaymentRepository;
-import com.ecommerce.prototype.infrastructure.client.response.TransactionResponse;
+import com.ecommerce.prototype.infrastructure.client.payu.response.TransactionResponse;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Paymentdb;
 import com.ecommerce.prototype.infrastructure.persistence.provider.OrderProvider;
 import lombok.AllArgsConstructor;
