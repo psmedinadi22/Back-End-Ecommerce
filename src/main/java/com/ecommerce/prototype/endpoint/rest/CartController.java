@@ -1,6 +1,7 @@
 package com.ecommerce.prototype.endpoint.rest;
 
 import com.ecommerce.prototype.application.domain.Cart;
+import com.ecommerce.prototype.application.domain.Product;
 import com.ecommerce.prototype.application.usecase.AddProductToCartUseCase;
 import com.ecommerce.prototype.application.usecase.CreateCartUseCase;
 import com.ecommerce.prototype.application.usecase.GetCartProductsUseCase;
@@ -81,7 +82,7 @@ public class CartController {
     public ResponseEntity<?> getCartProducts(@PathVariable int cartId) {
 
         try {
-            List<Productdb> products = getCartProductsUseCase.getCartProducts(cartId);
+            List<Product> products = getCartProductsUseCase.getCartProducts(cartId);
             return ResponseEntity.ok(products);
         } catch (CartNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

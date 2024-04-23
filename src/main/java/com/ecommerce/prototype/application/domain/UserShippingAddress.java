@@ -19,16 +19,4 @@ public class UserShippingAddress {
     private String country;
     private String postalCode;
     private String phone;
-
-    @Override
-    public String toString() {
-        return "UserShippingAddress{" +
-                "street='" + street + '\'' +
-                ", city='" + city + '\'' +
-                ", state='" + state + '\'' +
-                ", country='" + country + '\'' +
-                ", postalCode='" + postalCode + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
-    }
 }

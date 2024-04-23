@@ -2,17 +2,12 @@ package com.ecommerce.prototype.infrastructure.client.payu.provider;
 
 import com.ecommerce.prototype.application.domain.Order;
 import com.ecommerce.prototype.application.domain.PaymentResponse;
-import com.ecommerce.prototype.application.domain.RefundResponse;
-import com.ecommerce.prototype.application.domain.User;
 import com.ecommerce.prototype.application.usecase.repository.ExternalPlatformRepository;
 import com.ecommerce.prototype.infrastructure.client.PayuConfig;
 import com.ecommerce.prototype.infrastructure.client.payu.mappers.RequestMapper;
 import com.ecommerce.prototype.infrastructure.client.payu.request.PaymentAPIRequest;
-import com.ecommerce.prototype.infrastructure.client.payu.request.PaymentRequest;
-import com.ecommerce.prototype.infrastructure.client.payu.request.TransactionRequest;
 import com.ecommerce.prototype.infrastructure.client.payu.response.PayUResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -33,7 +28,7 @@ public class PayUProvider implements ExternalPlatformRepository {
 	@Override
 	public Optional<PaymentResponse> doPayment(Order order) {
 
-		PaymentAPIRequest apiRequest = RequestMapper.buildPaymentRequest(order, payuConfig.apiKey, payuConfig.apiLogin);
+		PaymentAPIRequest apiRequest = RequestMapper.buildPaymentRequest(order, payuConfig.apiKey, payuConfig.apiLogin, "VISA", payuConfig.merchantId, payuConfig.accountId, "COP");
 		ResponseEntity<String> responseEntity = doPostPayU(apiRequest);
 
 		if ( responseEntity.getStatusCode() == HttpStatus.OK ) {
@@ -82,11 +77,5 @@ public class PayUProvider implements ExternalPlatformRepository {
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		return client.doPost(apiRequest, headers, payuConfig.apiUrl);
-	}
-
-	@Override
-	public Optional<RefundResponse> doRefund(Order order, double amount) {
-
-		return Optional.empty();
 	}
 }

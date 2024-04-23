@@ -37,7 +37,7 @@ public class AddProductToCartUseCase {
     public void addProductToCart(Integer productId, int quantity, int cartId) {
 
         logger.info("Adding product with ID {} to cart with ID {}", productId, cartId);
-        Cart cart = MapperCart.mapToDomain(findCartById(cartId));
+        Cart cart = findCartById(cartId);
         checkCartStatus(cart.getStatus());
         Product product = MapperProduct.toProductDomain(findProductById(productId));
         validateProductQuantity(product, quantity);
@@ -52,7 +52,7 @@ public class AddProductToCartUseCase {
      * @return The cart object if found.
      * @throws IllegalArgumentException If the provided cart ID is invalid.
      */
-    private Cartdb findCartById(int cartId) {
+    private Cart findCartById(int cartId) {
 
         logger.debug("Finding cart with ID {}", cartId);
         return cartRepository.findById(cartId)

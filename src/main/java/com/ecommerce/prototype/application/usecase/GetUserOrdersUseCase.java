@@ -1,6 +1,7 @@
 package com.ecommerce.prototype.application.usecase;
 
 import com.ecommerce.prototype.application.domain.Order;
+import com.ecommerce.prototype.application.domain.User;
 import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
 import com.ecommerce.prototype.application.usecase.repository.OrderRepository;
 import com.ecommerce.prototype.application.usecase.repository.UserRepository;
@@ -22,8 +23,8 @@ public class GetUserOrdersUseCase {
 
     public List<Order> getUserOrders(Integer userId) {
 
-        Userdb userdb = userRepository.findById(userId);
-        if(userdb == null){
+        User user = userRepository.findUserById(userId);
+        if(user == null){
             throw new UserNoExistException("User not found with ID: " + userId);
         }
         List<Orderdb> orderdbs = orderRepository.findByUserId(userId);

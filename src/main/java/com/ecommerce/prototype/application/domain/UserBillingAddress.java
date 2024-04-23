@@ -16,16 +16,4 @@ public class UserBillingAddress {
     private String billingCountry;
     private String billingPostalCode;
     private String billingPhone;
-
-    @Override
-    public String toString() {
-        return "UserBillingAddress{" +
-                "billingStreet='" + billingStreet + '\'' +
-                ", billingCity='" + billingCity + '\'' +
-                ", billingState='" + billingState + '\'' +
-                ", billingCountry='" + billingCountry + '\'' +
-                ", billingPostalCode='" + billingPostalCode + '\'' +
-                ", billingPhone='" + billingPhone + '\'' +
-                '}';
-    }
 }

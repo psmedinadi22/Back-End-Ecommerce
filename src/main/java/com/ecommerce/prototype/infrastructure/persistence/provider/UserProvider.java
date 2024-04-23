@@ -70,7 +70,6 @@ public class UserProvider implements UserRepository {
     /**
      * Retrieves a user by ID.
      *
-     * @param userId The ID of the user to retrieve.
      * @return The user if found, otherwise null.
      */
     @Override
@@ -83,7 +82,7 @@ public class UserProvider implements UserRepository {
     @Override
     public User findUserById(Integer userId) {
 
-        return userJPARepository.findByUserId(userId);
+        return MapperUser.toUserDomain(userJPARepository.findByUserId(userId));
     }
 
     @Override

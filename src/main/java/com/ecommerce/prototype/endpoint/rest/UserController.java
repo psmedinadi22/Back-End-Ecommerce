@@ -59,9 +59,9 @@ public class UserController {
                     .withPhoneNumber(user.getPhoneNumber())
                     .withIdentificationType(user.getIdentificationType())
                     .withIdentificationNumber(user.getIdentificationNumber())
-                    .withAdmin(user.getIsAdmin())
-                    .withShippingAddress(user.getShippingAddress())
-                    .withBillingAddress(user.getBillingAddress());
+                    .withAdmin(user.getIsAdmin());
+                   // .withShippingAddress(user.to)
+                   // .withBillingAddress(user.getBillingAddress());
 
             return new ResponseEntity<>(userBuilder.build(), HttpStatus.CREATED);
         } catch (IllegalArgumentException | PasswordLengthException e) {
@@ -114,12 +114,12 @@ public class UserController {
                         Map<String, Object> cartInfo = new LinkedHashMap<>();
                         cartInfo.put("cartId", cart.getCartId());
                         cartInfo.put("status", cart.getStatus());
-                        cartInfo.put("userId", cart.getBuyer().getUserId());
+                        cartInfo.put("userId", cart.getBuyer().getId());
                         List<Integer> productIds = cart.getProducts().stream()
                                 .map(Product::getProductId)
                                 .collect(Collectors.toList());
                         cartInfo.put("productIds", productIds);
-                        cartInfo.put("productQuantities", cart.getProductsQuantity());
+                        cartInfo.put("productQuantities", cart.getProductQuantities());
 
                         return cartInfo;
                     })

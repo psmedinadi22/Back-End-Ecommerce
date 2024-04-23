@@ -8,11 +8,5 @@ import java.util.Optional;
 
 public interface ExternalPlatformRepository {
 
-
 	Optional<PaymentResponse> doPayment(Order order);
-	Optional<RefundResponse> doRefund(Order order, double amount);
-
-
-
-
 }

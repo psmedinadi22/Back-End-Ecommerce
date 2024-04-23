@@ -16,11 +16,11 @@ public class MapperProduct {
     public static Product toProductDomain(ProductRequest productRequest) throws IllegalArgumentException {
 
         Product product = Product.builder()
-                .productName(productRequest.getProductName())
-                .description(productRequest.getDescription())
-                .image(productRequest.getImage())
-                .price(productRequest.getPrice())
-                .quantity(productRequest.getQuantity())
+                .withProductName(productRequest.getProductName())
+                .withDescription(productRequest.getDescription())
+                .withImage(productRequest.getImage())
+                .withPrice(productRequest.getPrice())
+                .withQuantity(productRequest.getQuantity())
                 .build();
         Product.validateProductData(product);
 
@@ -36,13 +36,13 @@ public class MapperProduct {
      */
     public static Product toProductDomain(Productdb productdb) throws IllegalArgumentException {
         Product product = Product.builder()
-                .productId(productdb.getProductId())
-                .productName(productdb.getProductName())
-                .description(productdb.getDescription())
-                .image(productdb.getImage())
-                .price(productdb.getPrice())
-                .quantity(productdb.getQuantity())
-                .deleted(productdb.isDeleted())
+                .withProductId(productdb.getProductId())
+                .withProductName(productdb.getProductName())
+                .withDescription(productdb.getDescription())
+                .withImage(productdb.getImage())
+                .withPrice(productdb.getPrice())
+                .withQuantity(productdb.getQuantity())
+                .withDeleted(productdb.isDeleted())
                 .build();
         Product.validateProductData(product);
 

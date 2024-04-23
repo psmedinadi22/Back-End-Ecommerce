@@ -51,10 +51,10 @@ public class CreateCartUseCase {
     private User retrieveUser(Integer userId) {
 
         logger.debug("Retrieving user with ID {}", userId);
-        Userdb userdb = userRepository.findById(userId);
-        if (userdb != null) {
+        User user = userRepository.findUserById(userId);
+        if (user != null) {
             logger.debug("User found with ID {}", userId);
-            return MapperUser.toUserDomain(userdb);
+            return user;
         } else {
             logger.error("User not found with ID {}", userId);
             throw new UserNoExistException("User not found with ID: " + userId);

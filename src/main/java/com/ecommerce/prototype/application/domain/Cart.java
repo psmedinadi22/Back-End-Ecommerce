@@ -3,6 +3,7 @@ package com.ecommerce.prototype.application.domain;
 import lombok.*;
 import java.util.List;
 @Getter
+@Setter
 @Builder(setterPrefix = "with")
 @AllArgsConstructor
 @NoArgsConstructor

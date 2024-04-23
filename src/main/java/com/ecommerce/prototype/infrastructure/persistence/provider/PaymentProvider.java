@@ -18,13 +18,15 @@ public class PaymentProvider implements PaymentRepository {
     private final PaymentJPARepository paymentJPARepository;
 
     @Override
-    public Paymentdb save(Payment payment) {
+    public Payment save(Payment payment) {
 
-        return paymentJPARepository.save(MapperPayment.mapToModel(payment));
+        var paymentdb = MapperPayment.mapToModel(payment);
+        return paymentJPARepository.save(paymentdb).toPayment();
     }
 
     @Override
     public Optional<Payment> getPayment(Integer paymentId) {
+
         Paymentdb paymentdb = paymentJPARepository.findByPaymentID(paymentId)
                 .orElseThrow(() -> new PaymentNotFoundException("Payment not found with id: "+ paymentId));
         return Optional.of(MapperPayment.mapToDomain(paymentdb));

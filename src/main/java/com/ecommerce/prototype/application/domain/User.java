@@ -1,12 +1,11 @@
 package com.ecommerce.prototype.application.domain;
 
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Orderdb;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.TokenizedCarddb;
+
+import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.List;
+
 
 @Getter
 @Setter
@@ -20,15 +19,13 @@ public class User {
     private String phoneNumber;
     private String identificationType;
     private String identificationNumber;
-    private UserShippingAddress shippingAddress;
-    private UserBillingAddress billingAddress;
+    private Address shippingAddress;
+    private Address billingAddress;
     private Boolean isAdmin;
     private Boolean isDeleted;
-    private List<TokenizedCard> tokenizedCards;
-    private List<Order> orders;
-    private List<Cart> carts;
 
-    public User(Integer userId, String name, Email email, Password password, String phoneNumber, String identificationType, String identificationNumber, UserShippingAddress shippingAddress, UserBillingAddress billingAddress, Boolean isAdmin, Boolean isDeleted, List<TokenizedCard> tokenizedCards, List<Order> orders, List<Cart> carts) {
+
+    public User(Integer userId, String name, Email email, Password password, String phoneNumber, String identificationType, String identificationNumber, Address shippingAddress, Address billingAddress, Boolean isAdmin, Boolean isDeleted) {
 
         this.userId = userId;
         this.name = name;
@@ -41,11 +38,10 @@ public class User {
         this.billingAddress = billingAddress;
         this.isAdmin = assignUserRoles(email);
         this.isDeleted = isDeleted;
-        this.tokenizedCards = tokenizedCards;
-        this.orders = orders;
-        this.carts = carts;
         validateUserData(name, phoneNumber, identificationType, identificationNumber);
     }
+
+
 
     /**
      * Validates user data.

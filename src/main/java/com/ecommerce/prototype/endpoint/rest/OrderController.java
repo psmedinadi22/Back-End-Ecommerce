@@ -34,7 +34,7 @@ public class OrderController {
             orderResponse.setCreationDate(order.getCreationDate());
             orderResponse.setTotalAmount(order.getTotalAmount());
             orderResponse.setOrderStatus(order.getOrderStatus());
-            orderResponse.setUserId(order.getUser().getUserId());
+            orderResponse.setUserId(order.getBuyer().getId());
 
             return ResponseEntity.ok(orderResponse);
         } catch (OrderNotFoundException e) {

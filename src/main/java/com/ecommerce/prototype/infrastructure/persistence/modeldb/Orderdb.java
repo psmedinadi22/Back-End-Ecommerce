@@ -23,5 +23,4 @@ public class Orderdb {
     private OrderDetaildb orderDetail;
     @OneToOne
     private Paymentdb paymentdb;
-
 }

@@ -3,11 +3,9 @@ package com.ecommerce.prototype.application.usecase;
 import com.ecommerce.prototype.application.domain.*;
 import com.ecommerce.prototype.application.usecase.exception.*;
 import com.ecommerce.prototype.application.usecase.repository.*;
-import com.ecommerce.prototype.infrastructure.client.PaymentService;
 import com.ecommerce.prototype.infrastructure.client.mappers.*;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.*;
 import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.OrderJPARepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +21,13 @@ public class ProcessPaymentUseCase {
     private final CardRepository cardRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
-    private final OrderDetailRepository orderDetailRepository;
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
-    private final CreatePaymentUseCase createPaymentUseCase;
     private final UpdateProductQuantityUseCase updateProductQuantityUseCase;
     private final OrderJPARepository orderJPARepository;
     private final ExternalPlatformRepository externalPlatformRepository;
+    private final PaymentRepository paymentRepository;
+
     private static final Logger logger = LoggerFactory.getLogger(ProcessPaymentUseCase.class);
 
     /**
@@ -47,16 +45,13 @@ public class ProcessPaymentUseCase {
 
         var order = createOrder(cart, buyer, card);
 
-        var paymentResponse = externalPlatformRepository.doPayment(order);
-
-
-
-        var payment = paymentRepository.createPayment(paymentResponse);
+        var paymentResponse = externalPlatformRepository.doPayment(order)
+                .orElseThrow(() -> new InvalidPaymentException("Couldn't generate the payment"));
 
 
         logger.info("Payment processed successfully with response: {}", paymentResponse);
 
-        return payment;
+        return paymentResponse;
     }
 
 
@@ -151,11 +146,12 @@ public class ProcessPaymentUseCase {
         return orderRepository.createOrder(order, buyer.getId());
     }
 
+
     private double calculateTotalAmount(Cart cart) {
 
         double totalAmount = 0.0;
         List<Product> products = cart.getProducts();
-        List<Integer> quantities = cart.getProductsQuantity();
+        List<Integer> quantities = cart.getProductQuantities();
 
         for (int i = 0; i < products.size(); i++) {
             Product product = products.get(i);
@@ -165,29 +161,18 @@ public class ProcessPaymentUseCase {
         return totalAmount;
     }
 
-
-
-    private PaymentResponse processPayment(User user, int totalAmount, String creditCardTokenId, PaymentRequest paymentRequest) throws JsonProcessingException {
-
-        logger.info("Processing payment for user ID: {}", user.getUserId());
-
-        PaymentService paymentService = new PaymentService();
-        return paymentService.processPayment(user, totalAmount, creditCardTokenId, paymentRequest);
-    }
-
     /**
      * Updates the order, order detail, and cart based on the provided payment response.
      *
      * @param order The order to update.
      * @param cart The cart to update.
-     * @param orderDetail The order detail to update.
      * @param response The payment response.
      */
-    private void updateStatus(Order order, Cart cart, OrderDetail orderDetail, PaymentResponse response) {
+    private void updateStatus(Order order, Cart cart, PaymentResponse response) {
 
         logger.info("Updating status for order ID: {}", order.getOrderID());
 
-        String purchaseStatus = response.getCode().equals("SUCCESS") ? response.getTransactionResponse().getState() : "ERROR";
+       /* String purchaseStatus = response.getCode().equals("SUCCESS") ? response.getTransactionResponse().getState() : "ERROR";
         orderDetail.setPurchaseStatus(purchaseStatus);
         order.setOrderStatus(purchaseStatus);
         cart.setStatus(purchaseStatus.equals("SUCCESS") ? "PAID" : purchaseStatus.equals("DECLINED") ? "DECLINED" : purchaseStatus);
@@ -198,7 +183,7 @@ public class ProcessPaymentUseCase {
 
         cartRepository.save(MapperCart.mapToModel(cart));
         orderRepository.save(order);
-        orderDetailRepository.save(orderDetail);
+        orderDetailRepository.save(orderDetail);*/
     }
 
 
@@ -214,7 +199,7 @@ public class ProcessPaymentUseCase {
         logger.info("Updating inventory for cart ID: {}", cart.getCartId());
 
         List<Product> products = cart.getProducts();
-        List<Integer> quantities = cart.getProductsQuantity();
+        List<Integer> quantities = cart.getProductQuantities();
 
         for (int i = 0; i < products.size(); i++) {
             Product product = products.get(i);

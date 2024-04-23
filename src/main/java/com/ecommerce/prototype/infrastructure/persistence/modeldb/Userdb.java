@@ -14,7 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
-@Builder
+@Builder()
 @Table(name = "users")
 public class Userdb {
 
@@ -22,19 +22,36 @@ public class Userdb {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
     private String name;
-    private String email;
-    private String password;
+    private Email email;
+    private Password password;
     private String phoneNumber;
     private String identificationType;
     private String identificationNumber;
     @Embedded
-    private UserShippingAddress shippingAddress;
+    @AttributeOverrides({
+            @AttributeOverride(name = "street", column = @Column(name = "shipping_street")),
+            @AttributeOverride(name = "city", column = @Column(name = "shipping_city")),
+            @AttributeOverride(name = "state", column = @Column(name = "shipping_state")),
+            @AttributeOverride(name = "country", column = @Column(name = "shipping_country")),
+            @AttributeOverride(name = "postalCode", column = @Column(name = "shipping_postal_code")),
+            @AttributeOverride(name = "phone", column = @Column(name = "shipping_phone"))
+    })
+    private Address shippingAddress;
+
     @Embedded
-    private UserBillingAddress billingAddress;
+    @AttributeOverrides({
+            @AttributeOverride(name = "street", column = @Column(name = "billing_street")),
+            @AttributeOverride(name = "city", column = @Column(name = "billing_city")),
+            @AttributeOverride(name = "state", column = @Column(name = "billing_state")),
+            @AttributeOverride(name = "country", column = @Column(name = "billing_country")),
+            @AttributeOverride(name = "postalCode", column = @Column(name = "billing_postal_code")),
+            @AttributeOverride(name = "phone", column = @Column(name = "billing_phone"))
+    })
+    private Address billingAddress;
     private Boolean isAdmin;
     private Boolean isDeleted=false;
 
-    public Userdb(String name, String email, String password, String phoneNumber, String identificationType, String identificationNumber, UserShippingAddress shippingAddress, UserBillingAddress billingAddress, Boolean isAdmin) {
+    public Userdb(String name, Email email, Password password, String phoneNumber, String identificationType, String identificationNumber, Address shippingAddress, Address billingAddress, Boolean isAdmin) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -46,22 +63,23 @@ public class Userdb {
         this.isAdmin = isAdmin;
     }
 
-
     public Buyer toBuyer() {
 
         return Buyer.builder()
                     .withId(this.userId)
-                    .withEmail(new Email(this.email))
+                    .withEmail(this.email)
                     .withName(this.name)
-                    .withPassword(new Password(this.password))
+                    .withPassword(this.password)
                     .withIsDeleted(this.isDeleted)
                     .withNumberId(this.identificationNumber)
                     .withTypeId(this.identificationType)
-                    .withShippingAddress(toAddress(this.shippingAddress))
-                    .withBillingAddress(toAddress(this.billingAddress))
+                    .withShippingAddress(this.shippingAddress)
+                    .withBillingAddress(this.billingAddress)
                     .withPhoneNumber(this.phoneNumber)
                     .build();
     }
+
+
 
     private Address toAddress(UserShippingAddress userShippingAddress) {
 
@@ -86,6 +104,4 @@ public class Userdb {
                       .withPostalCode(userBillingAddress.getBillingPostalCode())
                       .build();
     }
-
-
 }

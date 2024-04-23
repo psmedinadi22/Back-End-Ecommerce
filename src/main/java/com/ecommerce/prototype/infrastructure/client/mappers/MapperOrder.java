@@ -5,8 +5,6 @@ import com.ecommerce.prototype.infrastructure.persistence.modeldb.Orderdb;
 
 public class MapperOrder {
 
-
-
     /**
      * Maps an Order domain object to an Orderdb entity.
      *
@@ -21,8 +19,7 @@ public class MapperOrder {
         orderdb.setCreationDate(order.getCreationDate());
         orderdb.setTotalAmount(order.getTotalAmount());
         orderdb.setOrderStatus(order.getOrderStatus());
-        orderdb.setUser(MapperUser.toUserModel(order.getUser()));
-       // orderdb.setPaymentdb(order.getPayment() != null ? MapperPayment.mapToModel(order.getPayment()) : null);
+        orderdb.setUser(MapperUser.toUserModel(order.getBuyer().toUser()));
         return orderdb;
     }
 
@@ -40,8 +37,7 @@ public class MapperOrder {
         order.setCreationDate(orderdb.getCreationDate());
         order.setTotalAmount(orderdb.getTotalAmount());
         order.setOrderStatus(orderdb.getOrderStatus());
-        order.setUser(MapperUser.mapToDomainWithoutOrders(orderdb.getUser()));
-        // order.setPayment(orderdb.getPaymentdb() != null ? MapperPayment.mapToDomain(orderdb.getPaymentdb()) : null);
+        order.setBuyer(orderdb.getUser().toBuyer());
         return order;
     }
 

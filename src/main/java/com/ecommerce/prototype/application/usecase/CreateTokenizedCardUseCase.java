@@ -64,11 +64,7 @@ public class CreateTokenizedCardUseCase {
     }
 
     private User retrieveUser(Integer userId) {
-        Userdb userdb = userRepository.findById(userId);
-        if (userdb!= null) {
-            return MapperUser.toUserDomain(userdb);
-        } else {
-            throw new UserNoExistException("User not found with ID: " + userId);
-        }
+
+        return userRepository.findUserById(userId);
     }
 }

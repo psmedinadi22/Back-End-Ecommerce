@@ -6,6 +6,7 @@ import com.ecommerce.prototype.infrastructure.client.payu.request.TokenizationRe
 import com.ecommerce.prototype.infrastructure.client.payu.response.TokenizationResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.PushBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.*;
@@ -22,6 +23,12 @@ public class PayuConfig {
 
     @Value("${payu.api.key}")
     public String apiKey;
+
+    @Value("${payu.merchantId}")
+    public String merchantId;
+
+    @Value("${payu.accountId}")
+    public String accountId;
 
     /**
      * Tokenizes the provided card using the given tokenization request.

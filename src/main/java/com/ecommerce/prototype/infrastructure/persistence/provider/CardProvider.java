@@ -2,13 +2,16 @@ package com.ecommerce.prototype.infrastructure.persistence.provider;
 
 import com.ecommerce.prototype.application.domain.Card;
 import com.ecommerce.prototype.application.domain.TokenizedCard;
+import com.ecommerce.prototype.application.domain.User;
 import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
 import com.ecommerce.prototype.application.usecase.repository.CardRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperTokenizedCard;
 import com.ecommerce.prototype.infrastructure.client.payu.response.TokenizationResponse;
+import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.TokenizedCarddb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
 import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.TokenizedCardJPARepository;
+import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.UserJPARepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +28,7 @@ import java.util.stream.Collectors;
 public class CardProvider implements CardRepository {
 
     private final TokenizedCardJPARepository tokenizedCardJPARepository;
-    private final UserProvider userProvider;
+    private final UserJPARepository userJPARepository;
 
 
     /**
@@ -44,7 +47,7 @@ public class CardProvider implements CardRepository {
     @Override
     public Optional<TokenizedCarddb> createTokenizedCard(TokenizationResponse tokenizedCard, Integer userId) {
         TokenizedCarddb tokenizedCarddb = MapperTokenizedCard.toTokenizedCardModel(tokenizedCard);
-        tokenizedCarddb.setUser(userProvider.findById(userId));
+        tokenizedCarddb.setUser(userJPARepository.findByUserId(userId));
         return Optional.ofNullable(tokenizedCardJPARepository.save(tokenizedCarddb));
 
     }
@@ -52,8 +55,8 @@ public class CardProvider implements CardRepository {
     @Override
     public List<TokenizedCard> findByUserId(Integer userId) {
 
-        Userdb userdb = userProvider.findById(userId);
-        if (userdb != null) {
+        Userdb user = userJPARepository.findByUserId(userId);
+        if (user != null) {
 
             List<TokenizedCarddb> tokenizedCarddbList = tokenizedCardJPARepository.findByUserUserId(userId);
             return tokenizedCarddbList.stream()
@@ -65,7 +68,8 @@ public class CardProvider implements CardRepository {
     }
 
     @Override
-    public void delete(TokenizedCarddb tokenizedCarddb) {
-        tokenizedCardJPARepository.delete(tokenizedCarddb);
+    public void delete(Card card) {
+        TokenizedCarddb tokenizedCarddb = tokenizedCardJPARepository.findByCreditCardTokenId(card.getTokenId());
+        tokenizedCardJPARepository.deleteById(tokenizedCarddb.getId());
     }
 }

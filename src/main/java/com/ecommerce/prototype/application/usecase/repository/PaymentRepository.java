@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface PaymentRepository {
 
-    Paymentdb save(Payment payment);
+    Payment save(Payment payment);
 
     Optional<Payment> getPayment(Integer paymentId);
 }

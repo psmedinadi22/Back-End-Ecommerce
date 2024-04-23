@@ -1,5 +1,6 @@
 package com.ecommerce.prototype.application.usecase;
 
+import com.ecommerce.prototype.application.domain.Card;
 import com.ecommerce.prototype.application.usecase.exception.TokenizedCardNotFoundException;
 import com.ecommerce.prototype.application.usecase.repository.CardRepository;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.TokenizedCarddb;
@@ -15,10 +16,9 @@ public class DeleteTokenizedCardUseCase {
 
     @Transactional
     public void deleteTokenizedCard(Integer tokenizedCardId) {
-        TokenizedCarddb tokenizedCarddb = cardRepository.findById(tokenizedCardId)
+        Card card = cardRepository.findById(tokenizedCardId)
                                                         .orElseThrow(() -> new TokenizedCardNotFoundException("Tokenized card not found with ID: " + tokenizedCardId));
-
-        cardRepository.delete(tokenizedCarddb);
+        cardRepository.delete(card);
     }
 }
 

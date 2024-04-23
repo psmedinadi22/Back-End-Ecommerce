@@ -28,8 +28,8 @@ public class MapperCart {
         cart.setCartId(cartdb.getCartId());
         cart.setStatus(cartdb.getStatus());
         cart.setProducts(products);
-        cart.setProductsQuantity(productsQuantity);
-        cart.setUser(MapperUser.mapToDomainWithoutCarts(cartdb.getUser()));
+        cart.setProductQuantities(productsQuantity);
+        cart.setBuyer(cart.getBuyer());
         return cart;
     }
 
@@ -45,14 +45,14 @@ public class MapperCart {
         List<Productdb> productdbs = cart.getProducts().stream()
                 .map(MapperProduct::toProductModel)
                 .collect(Collectors.toList());
-        List<Integer> productsQuantity = new ArrayList<>(cart.getProductsQuantity());
+        List<Integer> productsQuantity = new ArrayList<>(cart.getProductQuantities());
 
         Cartdb cartdb = new Cartdb();
         cartdb.setCartId(cart.getCartId());
         cartdb.setStatus(cart.getStatus());
         cartdb.setProducts(productdbs);
         cartdb.setProductQuantities(productsQuantity);
-        cartdb.setUser(MapperUser.toUserModel(cart.getBuyer()));
+        cartdb.setUser(MapperUser.toUserModel(cart.getBuyer().toUser()));
         return cartdb;
     }
 }

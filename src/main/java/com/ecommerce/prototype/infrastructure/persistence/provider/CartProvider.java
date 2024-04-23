@@ -12,6 +12,7 @@ import com.ecommerce.prototype.infrastructure.client.mappers.MapperCart;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Productdb;
 import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.CartJPARepository;
+import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.UserJPARepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import java.util.List;
@@ -25,6 +26,7 @@ public class CartProvider implements CartRepository {
     private final CartJPARepository cartJPARepository;
     private final ProductRepository productRepository;
     private final UserRepository userProvider;
+    private final UserJPARepository userJPARepository;
 
     /**
      * Adds a product to a cart.
@@ -100,7 +102,7 @@ public class CartProvider implements CartRepository {
 
         Cartdb cartdb = new Cartdb();
         cartdb.setStatus("outstanding");
-        cartdb.setUser(userProvider.findBayerById(userId));
+        cartdb.setUser(userJPARepository.findByUserId(userId));
         cartdb = cartJPARepository.save(cartdb);
 
         Cart savedCart =new Cart(

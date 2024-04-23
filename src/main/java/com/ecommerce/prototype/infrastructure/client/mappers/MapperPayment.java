@@ -12,18 +12,17 @@ public class MapperPayment {
      * @return A Payment object mapped from the Paymentdb object.
      * @throws IllegalArgumentException If the provided Paymentdb object is null.
      */
-    public static Payment mapToDomain(Paymentdb paymentdb) throws IllegalArgumentException{
-
-        Payment payment = new Payment();
-        payment.setPaymentID(paymentdb.getPaymentID());
-        payment.setTransactionID(paymentdb.getTransactionID());
-        payment.setPaymentDate(paymentdb.getPaymentDate());
-        payment.setAmount(paymentdb.getAmount());
-        payment.setPaymentMethod(paymentdb.getPaymentMethod());
-        payment.setPaymentStatus(paymentdb.getPaymentStatus());
-       // payment.setOrder(MapperOrder.mapToDomain(paymentdb.getOrder()));
-        return payment;
+    public static Payment mapToDomain(Paymentdb paymentdb) throws IllegalArgumentException {
+        return Payment.builder()
+                .withPaymentID(paymentdb.getPaymentID())
+                .withTransactionID(paymentdb.getTransactionID())
+                .withPaymentDate(paymentdb.getPaymentDate())
+                .withAmount(paymentdb.getAmount())
+                .withPaymentMethod(paymentdb.getPaymentMethod())
+                .withPaymentStatus(paymentdb.getPaymentStatus())
+                .build();
     }
+
 
     /**
      * Maps a Payment object to its corresponding data model Paymentdb.
@@ -34,16 +33,14 @@ public class MapperPayment {
      */
     public static Paymentdb mapToModel(Payment payment) throws IllegalArgumentException{
 
-        Paymentdb paymentdb = new Paymentdb();
-        paymentdb.setPaymentID(payment.getPaymentID());
-        paymentdb.setTransactionID(payment.getTransactionID());
-        paymentdb.setPaymentDate(payment.getPaymentDate());
-        paymentdb.setAmount(payment.getAmount());
-        paymentdb.setPaymentMethod(payment.getPaymentMethod());
-        paymentdb.setPaymentStatus(payment.getPaymentStatus());
-     //   paymentdb.setOrder(MapperOrder.mapToModel(payment.getOrder()));
-
-        return paymentdb;
+        return Paymentdb.builder()
+                .withPaymentID(payment.getPaymentID())
+                .withTransactionID(payment.getTransactionID())
+                .withPaymentDate(payment.getPaymentDate())
+                .withAmount(payment.getAmount())
+                .withPaymentMethod(payment.getPaymentMethod())
+                .withPaymentStatus(payment.getPaymentStatus())
+                .build();
     }
 
 }
