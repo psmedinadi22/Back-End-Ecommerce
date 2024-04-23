@@ -3,11 +3,8 @@ package com.ecommerce.prototype.application.usecase;
 import com.ecommerce.prototype.application.domain.Product;
 import com.ecommerce.prototype.application.usecase.exception.ProductNotFoundException;
 import com.ecommerce.prototype.application.usecase.repository.ProductRepository;
-import com.ecommerce.prototype.infrastructure.client.mappers.MapperProduct;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Productdb;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Component
@@ -25,10 +22,9 @@ public class UpdateProductQuantityUseCase {
      */
     public Product updateProductQuantity(Integer productId, int newQuantity) {
 
-        Productdb productdb = productRepository.findById(productId)
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productId));
-        productdb.setQuantity(newQuantity);
-        Product product = MapperProduct.toProductDomain(productdb);
+        product.setQuantity(newQuantity);
         productRepository.save(product);
         return product;
     }

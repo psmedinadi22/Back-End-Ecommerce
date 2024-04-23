@@ -29,8 +29,8 @@ public class MapperUser {
                 .phoneNumber(userRequest.getPhoneNumber())
                 .identificationType(userRequest.getIdentificationType())
                 .identificationNumber(userRequest.getIdentificationNumber())
-//                .shippingAddress(userRequest.getShippingAddress())
-//                .billingAddress(userRequest.getBillingAddress())
+                .shippingAddress(userRequest.getShippingAddress())
+                .billingAddress(userRequest.getBillingAddress())
                 .build();
     }
 
@@ -80,42 +80,6 @@ public class MapperUser {
                 .billingAddress(user.getBillingAddress())
                 .isAdmin(user.getIsAdmin())
                 .isDeleted(user.getIsDeleted())
-                .build();
-    }
-
-
-    public static User mapToDomainWithoutCarts(Userdb userdb) throws IllegalArgumentException {
-
-        return User.builder()
-                .userId(userdb.getUserId())
-                .name(userdb.getName())
-                .email(userdb.getEmail())
-                .password(userdb.getPassword())
-                .phoneNumber(userdb.getPhoneNumber())
-                .identificationType(userdb.getIdentificationType())
-                .identificationNumber(userdb.getIdentificationNumber())
-                .shippingAddress(userdb.getShippingAddress())
-                .billingAddress(userdb.getBillingAddress())
-                .isAdmin(userdb.getIsAdmin())
-                .isDeleted(userdb.getIsDeleted())
-                .build();
-    }
-
-    public static User mapToDomainWithoutOrders(Userdb userdb) throws IllegalArgumentException {
-
-
-        return User.builder()
-                .userId(userdb.getUserId())
-                .name(userdb.getName())
-                .email(userdb.getEmail())
-                .password(userdb.getPassword())
-                .phoneNumber(userdb.getPhoneNumber())
-                .identificationType(userdb.getIdentificationType())
-                .identificationNumber(userdb.getIdentificationNumber())
-                .shippingAddress(userdb.getShippingAddress())
-                .billingAddress(userdb.getBillingAddress())
-                .isAdmin(userdb.getIsAdmin())
-                .isDeleted(userdb.getIsDeleted())
                 .build();
     }
 }

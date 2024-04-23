@@ -19,7 +19,7 @@ public interface CartRepository {
     void save(Cartdb cartdb);
 
     String getCartStatus(int cartId);
-    List<Cartdb> findByUserId(Integer userId);
+    List<Cart> findByUserId(Integer userId);
 
     Optional<Cart> getCart(int cartId);
 }

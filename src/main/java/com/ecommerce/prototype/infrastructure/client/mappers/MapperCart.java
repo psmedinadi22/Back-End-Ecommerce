@@ -29,7 +29,7 @@ public class MapperCart {
         cart.setStatus(cartdb.getStatus());
         cart.setProducts(products);
         cart.setProductQuantities(productsQuantity);
-        cart.setBuyer(cart.getBuyer());
+        cart.setBuyer(cartdb.getUser().toBuyer());
         return cart;
     }
 

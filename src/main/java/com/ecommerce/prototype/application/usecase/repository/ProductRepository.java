@@ -10,7 +10,7 @@ public interface ProductRepository {
     Optional<Product> save(Product product);
     boolean existsById(Integer productId);
     void deleteById(Integer productId);
-    Optional<Productdb> findById(Integer productId);
+    Optional<Product> findById(Integer productId);
     Optional<Product> findByName(String productName);
 
 

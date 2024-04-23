@@ -1,11 +1,8 @@
 package com.ecommerce.prototype.application.domain;
 
-
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
 
 @Getter
 @Setter
@@ -77,6 +74,21 @@ public class User {
         return email.getAddress().toLowerCase().contains("admin");
     }
 
-
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", name='" + name + '\'' +
+                ", email=" + email +
+                ", password=" + password +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", identificationType='" + identificationType + '\'' +
+                ", identificationNumber='" + identificationNumber + '\'' +
+                ", shippingAddress=" + shippingAddress +
+                ", billingAddress=" + billingAddress +
+                ", isAdmin=" + isAdmin +
+                ", isDeleted=" + isDeleted +
+                '}';
+    }
 }
 

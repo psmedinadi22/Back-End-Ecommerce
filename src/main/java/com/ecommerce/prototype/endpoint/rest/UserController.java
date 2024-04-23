@@ -45,9 +45,8 @@ public class UserController {
 
         UserResponse.UserResponseBuilder userBuilder = UserResponse.builder();
         try {
-            logger.info("User: {}", userRequest);
+
             User mapperUser = MapperUser.toUserDomain(userRequest);
-            logger.info("Mapped User: {}", mapperUser);
 
             User user = createUserUseCase.createUser(mapperUser)
                     .orElseThrow(() -> new RuntimeException("Error saving user"));
@@ -59,9 +58,9 @@ public class UserController {
                     .withPhoneNumber(user.getPhoneNumber())
                     .withIdentificationType(user.getIdentificationType())
                     .withIdentificationNumber(user.getIdentificationNumber())
-                    .withAdmin(user.getIsAdmin());
-                   // .withShippingAddress(user.to)
-                   // .withBillingAddress(user.getBillingAddress());
+                    .withAdmin(user.getIsAdmin())
+                    .withShippingAddress(user.getShippingAddress())
+                    .withBillingAddress(user.getBillingAddress());
 
             return new ResponseEntity<>(userBuilder.build(), HttpStatus.CREATED);
         } catch (IllegalArgumentException | PasswordLengthException e) {
@@ -92,7 +91,7 @@ public class UserController {
         } catch (UserNoExistException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found error: " + e.getMessage());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

@@ -8,6 +8,7 @@ import com.ecommerce.prototype.application.usecase.exception.UserNoExistExceptio
 import com.ecommerce.prototype.application.usecase.repository.CartRepository;
 import com.ecommerce.prototype.application.usecase.repository.UserRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperUser;
+import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -19,4 +19,5 @@ public class Payment {
     private Integer tokenId;
     private Buyer buyer;
     private Integer cartId;
+    private String currency;
 }

@@ -120,10 +120,10 @@ public class ProductController {
      * otherwise an empty optional and the corresponding HTTP status code.
      */
     @GetMapping("/get/{productId}")
-    public ResponseEntity<Optional<Productdb>> getProductById(@PathVariable("productId") Integer productId) {
+    public ResponseEntity<Optional<Product>> getProductById(@PathVariable("productId") Integer productId) {
 
         try {
-            Optional<Productdb> product = getProductUseCase.findById(productId);
+            Optional<Product> product = getProductUseCase.findById(productId);
 
             if (product.isPresent()) {
                 return new ResponseEntity<>(product, HttpStatus.OK);

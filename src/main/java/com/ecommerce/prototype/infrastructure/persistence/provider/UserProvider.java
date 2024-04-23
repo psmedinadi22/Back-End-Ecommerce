@@ -1,6 +1,7 @@
 package com.ecommerce.prototype.infrastructure.persistence.provider;
 
 import com.ecommerce.prototype.application.domain.Buyer;
+import com.ecommerce.prototype.application.domain.Email;
 import com.ecommerce.prototype.application.domain.User;
 import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
 import com.ecommerce.prototype.application.usecase.repository.UserRepository;
@@ -37,20 +38,8 @@ public class UserProvider implements UserRepository {
      * @return True if a user exists with the given email, otherwise false.
      */
     @Override
-    public boolean existByEmail(String email) {
+    public boolean existByEmail(Email email) {
         return userJPARepository.existsByEmail(email);
-    }
-
-    /**
-     * Checks if a user exists with the given ID.
-     *
-     * @param userId The ID of the user to check.
-     * @return True if a user exists with the given ID, otherwise false.
-     */
-    @Override
-    public boolean existsById(Integer userId) {
-
-        return userJPARepository.existsById(userId);
     }
 
     /**
@@ -76,13 +65,17 @@ public class UserProvider implements UserRepository {
     public Buyer findBuyerById(Integer buyerId) {
 
         return userJPARepository.findByUserId(buyerId)
+                .orElseThrow(() -> new UserNoExistException("Buyer not found with ID: " + buyerId))
                                 .toBuyer();
     }
 
     @Override
     public User findUserById(Integer userId) {
 
-        return MapperUser.toUserDomain(userJPARepository.findByUserId(userId));
+        Userdb user = userJPARepository.findById(userId)
+                .orElseThrow(() -> new UserNoExistException("User not found with ID: " + userId));
+
+        return MapperUser.toUserDomain(user);
     }
 
     @Override

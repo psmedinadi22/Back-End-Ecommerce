@@ -77,12 +77,12 @@ public class ProductProvider implements ProductRepository {
      * @return An optional containing the product if found, otherwise empty.
      */
     @Override
-    public Optional<Productdb> findById(Integer productId) {
+    public Optional<Product> findById(Integer productId) {
         logger.info("ProductId {}:", productId);
         Productdb productdb = productJPARepository.findByProductId(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + productId));
         logger.info("ProductId {}:", productdb.getProductId());
-        return Optional.of(productdb);
+        return Optional.of(MapperProduct.toProductDomain(productdb));
     }
 
     /**

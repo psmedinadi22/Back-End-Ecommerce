@@ -5,16 +5,20 @@ import com.ecommerce.prototype.application.domain.Product;
 import com.ecommerce.prototype.application.usecase.exception.CartNotFoundException;
 import com.ecommerce.prototype.application.usecase.exception.ProductAlreadyInCartException;
 import com.ecommerce.prototype.application.usecase.exception.ProductNotFoundException;
+import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
 import com.ecommerce.prototype.application.usecase.repository.CartRepository;
 import com.ecommerce.prototype.application.usecase.repository.ProductRepository;
 import com.ecommerce.prototype.application.usecase.repository.UserRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperCart;
+import com.ecommerce.prototype.infrastructure.client.mappers.MapperProduct;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Productdb;
 import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.CartJPARepository;
 import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.UserJPARepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,7 +45,7 @@ public class CartProvider implements CartRepository {
     @Override
     public void addProductToCart(Product product, int quantity, int cartId) {
 
-        Productdb productdb = productRepository.findById(product.getProductId())
+        Product productdb = productRepository.findById(product.getProductId())
                 .orElseThrow(() -> new ProductNotFoundException("Product with ID " + product.getProductId() + " not found"));
 
         Cartdb cartdb = cartJPARepository.findById(cartId)
@@ -53,7 +57,7 @@ public class CartProvider implements CartRepository {
         if (productAlreadyInCart) {
             throw new ProductAlreadyInCartException("Product with ID " + product.getProductId() + " is already in the cart");
         }
-        cartdb.getProducts().add(productdb);
+        cartdb.getProducts().add(MapperProduct.toProductModel(productdb));
         cartdb.getProductQuantities().add(quantity);
         cartJPARepository.save(cartdb);
     }
@@ -102,12 +106,14 @@ public class CartProvider implements CartRepository {
 
         Cartdb cartdb = new Cartdb();
         cartdb.setStatus("outstanding");
-        cartdb.setUser(userJPARepository.findByUserId(userId));
+        cartdb.setUser(userJPARepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNoExistException("User not found with ID: " + userId)));
         cartdb = cartJPARepository.save(cartdb);
 
         Cart savedCart =new Cart(
                 cartdb.getCartId(),
-                cartdb.getStatus()
+                cartdb.getStatus(),
+                cartdb.getUser().toBuyer()
         );
         return Optional.of(savedCart);
     }
@@ -160,9 +166,13 @@ public class CartProvider implements CartRepository {
      * @return A list of carts belonging to the user.
      */
     @Override
-    public List<Cartdb> findByUserId(Integer userId) {
-
-        return cartJPARepository.findByUserId(userId);
+    public List<Cart> findByUserId(Integer userId) {
+        List<Cartdb> cartdbs = cartJPARepository.findByUserId(userId);
+        List<Cart> carts = new ArrayList<>();
+        for (Cartdb cartdb : cartdbs) {
+            carts.add(MapperCart.mapToDomain(cartdb));
+        }
+        return carts;
     }
 
     @Override

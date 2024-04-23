@@ -28,9 +28,9 @@ public class RemoveProductFromCartUseCase {
         cartRepository.findById(cartId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found with ID: " + cartId));
 
-        Productdb productdb = productRepository.findById(productId)
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productId));
-        Product product = MapperProduct.toProductDomain(productdb);
+
         cartRepository.removeProduct(cartId, product);
     }
 }

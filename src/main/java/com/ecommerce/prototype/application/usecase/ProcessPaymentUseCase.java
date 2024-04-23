@@ -24,9 +24,7 @@ public class ProcessPaymentUseCase {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UpdateProductQuantityUseCase updateProductQuantityUseCase;
-    private final OrderJPARepository orderJPARepository;
     private final ExternalPlatformRepository externalPlatformRepository;
-    private final PaymentRepository paymentRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(ProcessPaymentUseCase.class);
 
@@ -205,7 +203,7 @@ public class ProcessPaymentUseCase {
             Product product = products.get(i);
             int quantityInCart = quantities.get(i);
 
-            Productdb productdb = productRepository.findById(product.getProductId())
+            Product productdb = productRepository.findById(product.getProductId())
                     .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + product.getProductId()));
 
             int updatedQuantity = productdb.getQuantity() - quantityInCart;
@@ -215,7 +213,7 @@ public class ProcessPaymentUseCase {
             }
 
             updateProductQuantityUseCase.updateProductQuantity(product.getProductId(), updatedQuantity);
-            productRepository.save(MapperProduct.toProductDomain(productdb));
+            productRepository.save(productdb);
         }
     }
 }

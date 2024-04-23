@@ -15,9 +15,9 @@ public class Cart {
     private String status;
     private Buyer buyer;
 
-    public Cart(Integer cartId, String status) {
+    public Cart(Integer cartId, String status, Buyer buyer) {
         this.cartId = cartId;
         this.status = status;
-
+        this.buyer = buyer;
     }
 }

@@ -46,8 +46,10 @@ public class CardProvider implements CardRepository {
 
     @Override
     public Optional<TokenizedCarddb> createTokenizedCard(TokenizationResponse tokenizedCard, Integer userId) {
+
         TokenizedCarddb tokenizedCarddb = MapperTokenizedCard.toTokenizedCardModel(tokenizedCard);
-        tokenizedCarddb.setUser(userJPARepository.findByUserId(userId));
+        tokenizedCarddb.setUser(userJPARepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNoExistException("User not found with ID: " + userId)));
         return Optional.ofNullable(tokenizedCardJPARepository.save(tokenizedCarddb));
 
     }
@@ -55,20 +57,18 @@ public class CardProvider implements CardRepository {
     @Override
     public List<TokenizedCard> findByUserId(Integer userId) {
 
-        Userdb user = userJPARepository.findByUserId(userId);
-        if (user != null) {
+        userJPARepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNoExistException("User not found with ID: " + userId));
 
-            List<TokenizedCarddb> tokenizedCarddbList = tokenizedCardJPARepository.findByUserUserId(userId);
-            return tokenizedCarddbList.stream()
+        List<TokenizedCarddb> tokenizedCarddbList = tokenizedCardJPARepository.findByUserUserId(userId);
+        return tokenizedCarddbList.stream()
                     .map(MapperTokenizedCard::mapToDomain)
                     .collect(Collectors.toList());
-        } else {
-            throw new UserNoExistException("User not found with ID: " + userId);
-        }
     }
 
     @Override
     public void delete(Card card) {
+
         TokenizedCarddb tokenizedCarddb = tokenizedCardJPARepository.findByCreditCardTokenId(card.getTokenId());
         tokenizedCardJPARepository.deleteById(tokenizedCarddb.getId());
     }

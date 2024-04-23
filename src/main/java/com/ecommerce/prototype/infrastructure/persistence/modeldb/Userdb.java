@@ -4,8 +4,6 @@ import com.ecommerce.prototype.application.domain.Address;
 import com.ecommerce.prototype.application.domain.Buyer;
 import com.ecommerce.prototype.application.domain.Email;
 import com.ecommerce.prototype.application.domain.Password;
-import com.ecommerce.prototype.application.domain.UserBillingAddress;
-import com.ecommerce.prototype.application.domain.UserShippingAddress;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -77,31 +75,5 @@ public class Userdb {
                     .withBillingAddress(this.billingAddress)
                     .withPhoneNumber(this.phoneNumber)
                     .build();
-    }
-
-
-
-    private Address toAddress(UserShippingAddress userShippingAddress) {
-
-        return Address.builder()
-                      .withCity(userShippingAddress.getCity())
-                      .withCountry(userShippingAddress.getCountry())
-                      .withPhone(userShippingAddress.getPhone())
-                      .withStreet(userShippingAddress.getStreet())
-                      .withState(userShippingAddress.getState())
-                      .withPostalCode(userShippingAddress.getPostalCode())
-                      .build();
-    }
-
-    private Address toAddress(UserBillingAddress userBillingAddress) {
-
-        return Address.builder()
-                      .withCity(userBillingAddress.getBillingCity())
-                      .withCountry(userBillingAddress.getBillingCountry())
-                      .withPhone(userBillingAddress.getBillingPhone())
-                      .withStreet(userBillingAddress.getBillingStreet())
-                      .withState(userBillingAddress.getBillingState())
-                      .withPostalCode(userBillingAddress.getBillingPostalCode())
-                      .build();
     }
 }

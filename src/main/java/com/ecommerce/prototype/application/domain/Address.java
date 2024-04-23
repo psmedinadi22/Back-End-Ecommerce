@@ -1,10 +1,14 @@
 package com.ecommerce.prototype.application.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Builder(setterPrefix = "with")
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Address {
 
 	private String street;

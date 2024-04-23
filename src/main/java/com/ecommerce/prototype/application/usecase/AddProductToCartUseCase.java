@@ -5,10 +5,7 @@ import com.ecommerce.prototype.application.domain.Product;
 import com.ecommerce.prototype.application.usecase.exception.CartStateException;
 import com.ecommerce.prototype.application.usecase.exception.InsufficientProductQuantityException;
 import com.ecommerce.prototype.application.usecase.repository.CartRepository;
-import com.ecommerce.prototype.infrastructure.client.mappers.MapperCart;
-import com.ecommerce.prototype.infrastructure.client.mappers.MapperProduct;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Cartdb;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Productdb;
+import com.ecommerce.prototype.application.usecase.repository.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
@@ -19,7 +16,7 @@ import org.slf4j.LoggerFactory;
 @AllArgsConstructor
 public class AddProductToCartUseCase {
 
-    private GetProductUseCase getProductUseCase;
+    private ProductRepository productRepository;
     private CartRepository cartRepository;
     private static final Logger logger = LoggerFactory.getLogger(AddProductToCartUseCase.class);
 
@@ -39,7 +36,7 @@ public class AddProductToCartUseCase {
         logger.info("Adding product with ID {} to cart with ID {}", productId, cartId);
         Cart cart = findCartById(cartId);
         checkCartStatus(cart.getStatus());
-        Product product = MapperProduct.toProductDomain(findProductById(productId));
+        Product product = findProductById(productId);
         validateProductQuantity(product, quantity);
         addToCart(product, quantity, cartId);
         logger.info("Product with ID {} added to cart with ID {}", productId, cartId);
@@ -80,10 +77,10 @@ public class AddProductToCartUseCase {
      * @return The product object if found.
      * @throws IllegalArgumentException If the provided product ID is invalid.
      */
-    private Productdb findProductById(Integer productId) {
+    private Product findProductById(Integer productId) {
 
         logger.debug("Finding product with ID {}", productId);
-        return getProductUseCase.findById(productId)
+        return productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + productId));
     }
 

@@ -19,8 +19,5 @@ public class Orderdb {
     private String orderStatus;
     @ManyToOne
     private Userdb user;
-    @OneToOne(mappedBy = "order")
-    private OrderDetaildb orderDetail;
-    @OneToOne
-    private Paymentdb paymentdb;
+
 }

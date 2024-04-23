@@ -1,12 +1,10 @@
 package com.ecommerce.prototype.infrastructure.client.payu.response;
 
 
+import com.ecommerce.prototype.application.domain.Address;
 import com.ecommerce.prototype.application.domain.Email;
 import com.ecommerce.prototype.application.domain.Password;
-import com.ecommerce.prototype.application.domain.UserBillingAddress;
-import com.ecommerce.prototype.application.domain.UserShippingAddress;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import java.io.Serializable;
 
@@ -25,8 +23,8 @@ public class UserResponse implements Serializable {
     private String phoneNumber;
     private String identificationType;
     private String identificationNumber;
-    private UserShippingAddress shippingAddress;
-    private UserBillingAddress billingAddress;
+    private Address shippingAddress;
+    private Address billingAddress;
     private Boolean admin;
     private String deleted;
     private String error;

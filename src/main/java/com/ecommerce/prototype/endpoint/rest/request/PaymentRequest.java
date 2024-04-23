@@ -1,31 +1,45 @@
 package com.ecommerce.prototype.endpoint.rest.request;
 
+import com.ecommerce.prototype.application.domain.Buyer;
 import com.ecommerce.prototype.application.domain.Payment;
+import com.ecommerce.prototype.infrastructure.persistence.provider.UserProvider;
+import lombok.AllArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Setter
+@AllArgsConstructor
 public class PaymentRequest {
+
+
 
 	private Integer tokenizedCardId;
 	private Integer cartId;
-	private Integer userId; // Buyer
+	private Integer userId;
 	private String paymentMethod;
-	private String referenceCode;
-	private String txValue;
 	private String currency;
 
+	private final UserProvider userProvider;
 
-	public Payment toPayment() {
+	public PaymentRequest(UserProvider userProvider) {
+		this.userProvider = userProvider;
+	}
+
+
+    public Payment toPayment() {
+
+		Buyer buyer = userProvider.findBuyerById(this.userId);
 
 		return Payment.builder()
 					  .withTokenId(this.tokenizedCardId)
-					  .withAmount(Integer.parseInt(this.txValue))
+				      .withCartId(this.cartId)
+				      .withBuyer(buyer)
+				      .withPaymentMethod(paymentMethod)
+				      .withCurrency(this.currency)
 					  .withPaymentDate(new Date())
-					  .withPaymentStatus("Init")
+					  .withPaymentStatus("Pending")
 					  .build();
 	}
-
 }

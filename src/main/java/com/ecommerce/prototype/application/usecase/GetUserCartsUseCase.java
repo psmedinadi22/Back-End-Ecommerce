@@ -36,12 +36,8 @@ public class GetUserCartsUseCase {
         if(user == null){
             throw new UserNoExistException("User not found with ID: " + userId);
         }
-        List<Cartdb> cartdbs = cartRepository.findByUserId(userId);
+        List<Cart> carts = cartRepository.findByUserId(userId);
 
-        List<Cart> carts = new ArrayList<>();
-        for (Cartdb cartdb : cartdbs) {
-            carts.add(MapperCart.mapToDomain(cartdb));
-        }
         return carts;
     }
 }
