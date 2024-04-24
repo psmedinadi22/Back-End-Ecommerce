@@ -5,15 +5,11 @@ import com.ecommerce.prototype.application.domain.Payment;
 import com.ecommerce.prototype.infrastructure.persistence.provider.UserProvider;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.Date;
 
 @Setter
 @AllArgsConstructor
 public class PaymentRequest {
-
-
 
 	private Integer tokenizedCardId;
 	private Integer cartId;
@@ -21,25 +17,19 @@ public class PaymentRequest {
 	private String paymentMethod;
 	private String currency;
 
-	private final UserProvider userProvider;
 
-	public PaymentRequest(UserProvider userProvider) {
-		this.userProvider = userProvider;
-	}
+	public Payment toPayment() {
 
-
-    public Payment toPayment() {
-
-		Buyer buyer = userProvider.findBuyerById(this.userId);
 
 		return Payment.builder()
-					  .withTokenId(this.tokenizedCardId)
-				      .withCartId(this.cartId)
-				      .withBuyer(buyer)
-				      .withPaymentMethod(paymentMethod)
-				      .withCurrency(this.currency)
-					  .withPaymentDate(new Date())
-					  .withPaymentStatus("Pending")
-					  .build();
+				.withTokenId(this.tokenizedCardId)
+				.withCartId(this.cartId)
+				.withBuyerId(userId)
+				.withPaymentMethod(paymentMethod)
+				.withCurrency(this.currency)
+				.withPaymentDate(new Date())
+				.withPaymentStatus("Pending")
+				.build();
 	}
 }
+

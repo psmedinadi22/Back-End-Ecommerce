@@ -3,9 +3,6 @@ package com.ecommerce.prototype.application.usecase;
 import com.ecommerce.prototype.application.domain.*;
 import com.ecommerce.prototype.application.usecase.exception.*;
 import com.ecommerce.prototype.application.usecase.repository.*;
-import com.ecommerce.prototype.infrastructure.client.mappers.*;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.*;
-import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.OrderJPARepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +34,13 @@ public class ProcessPaymentUseCase {
 
         logger.info("Processing payment for request with payment method : {} will init", payment.getPaymentMethod());
 
-        var buyer = getBuyer(payment.getBuyer().getId());
+        var buyer = getBuyer(payment.getBuyerId());
         var card = verifyTokenizedCard(payment.getTokenId(), buyer.getId());
         var cart = getCart(payment.getCartId(), buyer.getId());
 
         var order = createOrder(cart, buyer, card);
+
+        logger.info("Order created with Id: {}", order.getOrderID());
 
         var paymentResponse = externalPlatformRepository.doPayment(order)
                 .orElseThrow(() -> new InvalidPaymentException("Couldn't generate the payment"));
@@ -137,6 +136,8 @@ public class ProcessPaymentUseCase {
                          .withTotalAmount(totalAmount)
                          .withCart(cart)
                          .withCard(card)
+                         .withBillingAddress(buyer.getBillingAddress())
+                         .withShippingAddress(buyer.getShippingAddress())
                          .build();
 
         logger.info("Start creating Order with User Id : {}", buyer.getId());

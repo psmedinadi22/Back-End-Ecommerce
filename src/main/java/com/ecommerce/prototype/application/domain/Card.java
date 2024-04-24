@@ -1,7 +1,5 @@
 package com.ecommerce.prototype.application.domain;
 
-
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.TokenizedCarddb;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

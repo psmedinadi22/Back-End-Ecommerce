@@ -1,9 +1,14 @@
 package com.ecommerce.prototype.infrastructure.persistence.provider;
 
+import com.ecommerce.prototype.application.domain.Card;
+import com.ecommerce.prototype.application.domain.Cart;
 import com.ecommerce.prototype.application.domain.Order;
 import com.ecommerce.prototype.application.usecase.ProcessPaymentUseCase;
+import com.ecommerce.prototype.application.usecase.exception.CartNotFoundException;
 import com.ecommerce.prototype.application.usecase.exception.OrderNotFoundException;
 import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
+import com.ecommerce.prototype.application.usecase.repository.CardRepository;
+import com.ecommerce.prototype.application.usecase.repository.CartRepository;
 import com.ecommerce.prototype.application.usecase.repository.OrderRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperOrder;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Orderdb;
@@ -23,6 +28,8 @@ public class OrderProvider implements OrderRepository {
 
     private final OrderJPARepository orderJPARepository;
     private final UserJPARepository userJPARepository;
+    private final CardRepository cardRepository;
+    private final CartRepository cartRepository;
     private static final Logger logger = LoggerFactory.getLogger(OrderProvider.class);
 
     /**
@@ -36,7 +43,11 @@ public class OrderProvider implements OrderRepository {
 
         Orderdb orderdb = MapperOrder.mapToModel(order);
         Orderdb savedOrder = orderJPARepository.save(orderdb);
-        return MapperOrder.mapToDomain(savedOrder);
+        Cart cart = cartRepository.findById(orderdb.getCartId())
+                .orElseThrow(() -> new CartNotFoundException("Cart not found with ID: " + orderdb.getCartId()));
+        Card card = cardRepository.findByTokenId(orderdb.getTokenId());
+
+        return MapperOrder.mapToDomain(savedOrder, cart, card);
     }
 
     /**
@@ -51,7 +62,10 @@ public class OrderProvider implements OrderRepository {
 
         Orderdb orderdb = orderJPARepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with ID: " + orderId));
-        return Optional.of(MapperOrder.mapToDomain(orderdb));
+        Cart cart = cartRepository.findById(orderdb.getCartId())
+                .orElseThrow(() -> new CartNotFoundException("Cart not found with ID: " + orderdb.getCartId()));
+        Card card = cardRepository.findByTokenId(orderdb.getTokenId());
+        return Optional.of(MapperOrder.mapToDomain(orderdb, cart, card));
     }
 
     /**
@@ -67,7 +81,11 @@ public class OrderProvider implements OrderRepository {
         Optional<Orderdb> orderdbOptional = orderJPARepository.findByOrderID(orderId);
 
         Orderdb orderdb = orderdbOptional.orElseThrow(() -> new RuntimeException("Order not found with Id: " + orderId));
-        Order orderSaved = MapperOrder.mapToDomain(orderdb);
+        Cart cart = cartRepository.findById(orderdb.getCartId())
+                .orElseThrow(() -> new CartNotFoundException("Cart not found with ID: " + orderdb.getCartId()));
+        Card card = cardRepository.findByTokenId(orderdb.getTokenId());
+
+        Order orderSaved = MapperOrder.mapToDomain(orderdb, cart, card);
         return Optional.of(orderSaved);
     }
 
@@ -99,9 +117,8 @@ public class OrderProvider implements OrderRepository {
                                     .orElseThrow(() -> new UserNoExistException("The user not found in database"));
 
         orderdb.setUser(user);
-        orderdb = orderJPARepository.save(orderdb);
+        orderJPARepository.save(orderdb);
 
-        return MapperOrder.mapToDomain(orderdb);
+        return order;
     }
-
 }

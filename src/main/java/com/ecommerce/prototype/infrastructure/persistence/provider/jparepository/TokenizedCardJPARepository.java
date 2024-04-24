@@ -12,4 +12,6 @@ public interface TokenizedCardJPARepository extends JpaRepository<TokenizedCardd
     TokenizedCarddb save(TokenizedCarddb tokenizedCarddb);
     List<TokenizedCarddb> findByUserUserId(Integer userId);
     TokenizedCarddb findByCreditCardTokenId(String creditCardTokenId);
+
+
 }

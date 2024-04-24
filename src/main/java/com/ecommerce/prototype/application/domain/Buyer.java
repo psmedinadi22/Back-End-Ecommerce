@@ -36,4 +36,20 @@ public class Buyer {
 				.isAdmin(false)
 				.build();
 	}
+
+	@Override
+	public String toString() {
+		return "Buyer{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", email=" + email +
+				", password=" + password +
+				", phoneNumber='" + phoneNumber + '\'' +
+				", typeId='" + typeId + '\'' +
+				", numberId='" + numberId + '\'' +
+				", isDeleted=" + isDeleted +
+				", shippingAddress=" + shippingAddress +
+				", billingAddress=" + billingAddress +
+				'}';
+	}
 }

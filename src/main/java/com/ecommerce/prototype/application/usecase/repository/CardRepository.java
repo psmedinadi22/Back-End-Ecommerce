@@ -19,4 +19,5 @@ public interface CardRepository {
     List<TokenizedCard> findByUserId(Integer userId);
 
     void delete(Card card);
+    Card findByTokenId (String tokenId);
 }

@@ -22,4 +22,16 @@ public class TokenizedCard {
     private String maskedNumber;
     private String errorDescription;
     private Buyer buyer;
+
+    public Card toCard(){
+        return Card.builder()
+                .withPayerId(Integer.valueOf(this.payerId))
+                .withName(this.name)
+                .withIdentificationNumber(this.identificationNumber)
+                .withPaymentMethod(this.paymentMethod)
+                .withNumber(this.maskedNumber)
+                .withExpirationDate(this.expirationDate)
+                .withTokenId(this.creditCardTokenId)
+                .build();
+    }
 }

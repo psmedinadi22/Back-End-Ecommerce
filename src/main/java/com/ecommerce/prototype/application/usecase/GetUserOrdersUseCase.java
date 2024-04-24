@@ -1,8 +1,13 @@
 package com.ecommerce.prototype.application.usecase;
 
+import com.ecommerce.prototype.application.domain.Card;
+import com.ecommerce.prototype.application.domain.Cart;
 import com.ecommerce.prototype.application.domain.Order;
 import com.ecommerce.prototype.application.domain.User;
+import com.ecommerce.prototype.application.usecase.exception.CartNotFoundException;
 import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
+import com.ecommerce.prototype.application.usecase.repository.CardRepository;
+import com.ecommerce.prototype.application.usecase.repository.CartRepository;
 import com.ecommerce.prototype.application.usecase.repository.OrderRepository;
 import com.ecommerce.prototype.application.usecase.repository.UserRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperOrder;
@@ -20,6 +25,8 @@ public class GetUserOrdersUseCase {
 
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
+    private final CardRepository cardRepository;
+    private final CartRepository cartRepository;
 
     public List<Order> getUserOrders(Integer userId) {
 
@@ -30,7 +37,10 @@ public class GetUserOrdersUseCase {
         List<Orderdb> orderdbs = orderRepository.findByUserId(userId);
         List<Order> orders = new ArrayList<>();
         for (Orderdb orderdb : orderdbs) {
-            orders.add(MapperOrder.mapToDomain(orderdb));
+            Cart cart = cartRepository.findById(orderdb.getCartId())
+                    .orElseThrow(() -> new CartNotFoundException("Cart not found with ID: " + orderdb.getCartId()));
+            Card card = cardRepository.findByTokenId(orderdb.getTokenId());
+            orders.add(MapperOrder.mapToDomain(orderdb , cart, card));
         }
         return orders;
     }

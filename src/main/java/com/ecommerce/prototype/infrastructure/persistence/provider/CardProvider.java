@@ -31,6 +31,7 @@ public class CardProvider implements CardRepository {
     private final UserJPARepository userJPARepository;
 
 
+
     /**
      * Retrieves a tokenized card by its ID.
      *
@@ -71,5 +72,11 @@ public class CardProvider implements CardRepository {
 
         TokenizedCarddb tokenizedCarddb = tokenizedCardJPARepository.findByCreditCardTokenId(card.getTokenId());
         tokenizedCardJPARepository.deleteById(tokenizedCarddb.getId());
+    }
+
+    @Override
+    public Card findByTokenId(String tokenId) {
+        TokenizedCarddb tokenizedCarddb = tokenizedCardJPARepository.findByCreditCardTokenId(tokenId);
+        return MapperTokenizedCard.mapToDomain(tokenizedCarddb).toCard();
     }
 }

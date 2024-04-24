@@ -17,7 +17,7 @@ public class Payment {
     private String paymentMethod;
     private String paymentStatus;
     private Integer tokenId;
-    private Buyer buyer;
+    private Integer buyerId;
     private Integer cartId;
     private String currency;
 }

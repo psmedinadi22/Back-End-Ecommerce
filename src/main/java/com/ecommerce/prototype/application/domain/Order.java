@@ -23,4 +23,19 @@ public class Order {
     private Address billingAddress;
     private Cart cart;
     private Card card;
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "orderID=" + orderID +
+                ", creationDate=" + creationDate +
+                ", totalAmount=" + totalAmount +
+                ", orderStatus='" + orderStatus + '\'' +
+                ", buyer=" + buyer +
+                ", shippingAddress=" + shippingAddress +
+                ", billingAddress=" + billingAddress +
+                ", cart=" + cart +
+                ", card=" + card +
+                '}';
+    }
 }
