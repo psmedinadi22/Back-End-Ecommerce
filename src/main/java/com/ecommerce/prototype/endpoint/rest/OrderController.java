@@ -1,5 +1,6 @@
 package com.ecommerce.prototype.endpoint.rest;
 
+import com.ecommerce.prototype.application.domain.Address;
 import com.ecommerce.prototype.application.domain.Order;
 import com.ecommerce.prototype.application.usecase.GetOrderUseCase;
 import com.ecommerce.prototype.application.usecase.exception.OrderNotFoundException;
@@ -29,12 +30,17 @@ public class OrderController {
             Order order = getOrderUseCase.getOrder(orderId)
                     .orElseThrow(() -> new RuntimeException("Order not found with Id: " + orderId));
 
-            OrderResponse orderResponse = new OrderResponse();
-            orderResponse.setOrderId(order.getOrderID());
-            orderResponse.setCreationDate(order.getCreationDate());
-            orderResponse.setTotalAmount(order.getTotalAmount());
-            orderResponse.setOrderStatus(order.getOrderStatus());
-            orderResponse.setUserId(order.getBuyer().getId());
+            OrderResponse orderResponse =  OrderResponse.builder()
+                    .withOrderId(order.getOrderID())
+                    .withCreationDate(order.getCreationDate())
+                    .withTotalAmount(order.getTotalAmount())
+                    .withOrderStatus(order.getOrderStatus())
+                    .withUserId(order.getBuyer().getId())
+                    .withCartId(order.getCart().getCartId())
+                    .withTokenId(order.getCard().getTokenId())
+                    .withShippingAddress(order.getShippingAddress())
+                    .withBillingAddress(order.getBillingAddress())
+                    .build();
 
             return ResponseEntity.ok(orderResponse);
         } catch (OrderNotFoundException e) {

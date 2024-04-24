@@ -1,9 +1,7 @@
 package com.ecommerce.prototype.infrastructure.client.payu.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.ecommerce.prototype.application.domain.Address;
+import lombok.*;
 
 import java.util.Date;
 
@@ -11,12 +9,17 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(setterPrefix = "with")
 public class OrderResponse {
+
     private Integer orderId;
     private Date creationDate;
     private Double totalAmount;
     private String orderStatus;
     private Integer userId;
-
+    private Address shippingAddress;
+    private Address billingAddress;
+    private Integer cartId;
+    private String tokenId;
 }
 

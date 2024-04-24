@@ -2,15 +2,16 @@ package com.ecommerce.prototype.infrastructure.persistence.modeldb;
 
 import com.ecommerce.prototype.application.domain.*;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.Date;
 @Getter
 @Setter
 @Entity
 @Table(name = "orders")
 @Builder(setterPrefix = "with")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Orderdb {
 
     @Id
