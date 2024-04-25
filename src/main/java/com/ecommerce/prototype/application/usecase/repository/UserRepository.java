@@ -14,5 +14,5 @@ public interface UserRepository {
     Buyer findBuyerById(Integer userId);
     User findUserById(Integer userId);
 
-    Optional<User> findByEmail(String email);
+    Optional<User> findByEmail(Email email);
 }

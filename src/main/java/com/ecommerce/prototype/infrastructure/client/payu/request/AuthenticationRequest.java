@@ -1,5 +1,6 @@
 package com.ecommerce.prototype.infrastructure.client.payu.request;
 
+import com.ecommerce.prototype.application.domain.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AuthenticationRequest {
 
-    private String email;
+    private Email email;
     private String password;
 }

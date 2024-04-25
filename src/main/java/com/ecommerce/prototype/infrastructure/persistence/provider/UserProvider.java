@@ -3,6 +3,7 @@ package com.ecommerce.prototype.infrastructure.persistence.provider;
 import com.ecommerce.prototype.application.domain.Buyer;
 import com.ecommerce.prototype.application.domain.Email;
 import com.ecommerce.prototype.application.domain.User;
+import com.ecommerce.prototype.application.usecase.exception.InvalidCredentialsException;
 import com.ecommerce.prototype.application.usecase.exception.UserNoExistException;
 import com.ecommerce.prototype.application.usecase.repository.UserRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperUser;
@@ -83,8 +84,9 @@ public class UserProvider implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
-        return Optional.ofNullable(MapperUser.toUserDomain(userJPARepository.findByEmail(email)));
+    public Optional<User> findByEmail(Email email) {
+        return Optional.ofNullable(MapperUser.toUserDomain(userJPARepository.findByEmail(email)
+                .orElseThrow(() -> new InvalidCredentialsException("Incorrect email or password"))));
     }
 }
 

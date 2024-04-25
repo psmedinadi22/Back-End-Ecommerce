@@ -1,5 +1,6 @@
 package com.ecommerce.prototype.application.usecase;
 
+import com.ecommerce.prototype.application.domain.Email;
 import com.ecommerce.prototype.application.domain.User;
 import com.ecommerce.prototype.application.usecase.exception.InvalidCredentialsException;
 import com.ecommerce.prototype.application.usecase.exception.OrderNotFoundException;
@@ -26,17 +27,16 @@ public class AuthenticateUserUseCase {
      * @return The authenticated user if credentials are correct.
      * @throws InvalidCredentialsException If email or password is incorrect.
      */
-    public User authenticateUser(String email, String password) {
-        logger.debug("Authenticating user with email: {}", email);
+    public User authenticateUser(Email email, String password) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new InvalidCredentialsException("Incorrect email or password"));
 
         if (password.equals(user.getPassword().getValue()))  {
-            logger.info("User authenticated successfully: {}", email);
+            logger.info("User authenticated successfully with Id: {}", user.getUserId());
             return user;
         } else {
-            logger.warn("Incorrect password for user with email: {}", email);
+            logger.warn("Incorrect password for user with email: {}", email.getAddress());
             throw new InvalidCredentialsException("Incorrect email or password");
         }
     }
