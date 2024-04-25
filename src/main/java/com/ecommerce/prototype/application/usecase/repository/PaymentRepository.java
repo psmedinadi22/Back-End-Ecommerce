@@ -1,13 +1,11 @@
 package com.ecommerce.prototype.application.usecase.repository;
 
-import com.ecommerce.prototype.application.domain.Payment;
-import com.ecommerce.prototype.infrastructure.persistence.modeldb.Paymentdb;
-
+import com.ecommerce.prototype.application.domain.PaymentResponse;
 import java.util.Optional;
 
 public interface PaymentRepository {
 
-    Payment save(Payment payment);
+    PaymentResponse save(PaymentResponse paymentResponse);
 
-    Optional<Payment> getPayment(Integer paymentId);
+    Optional<PaymentResponse> getPayment(Integer paymentId);
 }

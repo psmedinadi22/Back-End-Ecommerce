@@ -7,6 +7,7 @@ import com.ecommerce.prototype.infrastructure.client.PayuConfig;
 import com.ecommerce.prototype.infrastructure.client.payu.mappers.RequestMapper;
 import com.ecommerce.prototype.infrastructure.client.payu.request.PaymentAPIRequest;
 import com.ecommerce.prototype.infrastructure.client.payu.response.PayUResponse;
+import com.ecommerce.prototype.infrastructure.persistence.provider.UserProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Component
@@ -24,12 +28,16 @@ public class PayUProvider implements ExternalPlatformRepository {
 
 	private PayuConfig payuConfig;
 	private HttpClient client;
+	private static final Logger logger = LoggerFactory.getLogger(PayUProvider.class);
+
 
 	@Override
 	public Optional<PaymentResponse> doPayment(Order order) {
 
 		PaymentAPIRequest apiRequest = RequestMapper.buildPaymentRequest(order, payuConfig.apiKey, payuConfig.apiLogin, "VISA", payuConfig.merchantId, payuConfig.accountId, "COP");
 		ResponseEntity<String> responseEntity = doPostPayU(apiRequest);
+
+		logger.info(String.valueOf(responseEntity));
 
 		if ( responseEntity.getStatusCode() == HttpStatus.OK ) {
 
@@ -40,12 +48,15 @@ public class PayUProvider implements ExternalPlatformRepository {
 
 				// APPROVED, DECLINED, ERROR, PENDING
 
+				long timestamp = Long.parseLong(payuResponse.getTransactionResponse().getOperationDate());
+				Date date = new Date(timestamp);
+
 				return Optional.of(PaymentResponse.builder()
 												  .withStatus("SUCCESS")
 						                          .withState(payuResponse.getTransactionResponse().getState().equals("APPROVED") ? "ENTREGAR_PRODUCTO" : "")
 												  .withExternalId(payuResponse.getTransactionResponse().getTransactionId())
 												  .withExternalState(payuResponse.getTransactionResponse().getState())
-												  .withCreationDate(payuResponse.getTransactionResponse().getOperationDate())
+												  .withCreationDate(date)
 												  .withMessage(payuResponse.getTransactionResponse().getResponseMessage())
 												  .withOrder(order)
 												  .build());

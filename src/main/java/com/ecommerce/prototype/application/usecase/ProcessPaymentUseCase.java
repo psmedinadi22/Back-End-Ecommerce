@@ -22,6 +22,7 @@ public class ProcessPaymentUseCase {
     private final ProductRepository productRepository;
     private final UpdateProductQuantityUseCase updateProductQuantityUseCase;
     private final ExternalPlatformRepository externalPlatformRepository;
+    private final PaymentRepository paymentRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(ProcessPaymentUseCase.class);
 
@@ -45,10 +46,11 @@ public class ProcessPaymentUseCase {
         var paymentResponse = externalPlatformRepository.doPayment(order)
                 .orElseThrow(() -> new InvalidPaymentException("Couldn't generate the payment"));
 
+        var paymentResponseSaved = createPaymentResponse(paymentResponse);
 
-        logger.info("Payment processed successfully with response: {}", paymentResponse);
+        logger.info("Payment processed successfully with Id: {}", paymentResponseSaved.getId());
 
-        return paymentResponse;
+        return paymentResponseSaved;
     }
 
 
@@ -143,6 +145,10 @@ public class ProcessPaymentUseCase {
         logger.info("Start creating Order with User Id : {}", buyer.getId());
 
         return orderRepository.createOrder(order, buyer.getId());
+    }
+
+    private PaymentResponse createPaymentResponse(PaymentResponse paymentResponse){
+        return paymentRepository.save(paymentResponse);
     }
 
 

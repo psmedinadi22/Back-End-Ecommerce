@@ -19,6 +19,5 @@ public class PayUResponse {
     private Integer orderId;
     private Integer orderDetailId;
     private Integer paymentId;
-
 }
 

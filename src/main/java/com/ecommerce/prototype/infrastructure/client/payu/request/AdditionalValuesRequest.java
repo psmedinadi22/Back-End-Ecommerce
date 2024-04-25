@@ -12,9 +12,4 @@ public class AdditionalValuesRequest {
 
     @JsonProperty("TX_VALUE")
     private AdditionalValueRequest TX_VALUE;
-//    @JsonProperty("TX_TAX")
-//    private AdditionalValueRequest TX_TAX;
-//    @JsonProperty("TX_TAX_RETURN_BASE")
-//    private AdditionalValueRequest TX_TAX_RETURN_BASE;
-
 }

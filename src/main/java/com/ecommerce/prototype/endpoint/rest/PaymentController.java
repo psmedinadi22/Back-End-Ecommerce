@@ -1,6 +1,6 @@
 package com.ecommerce.prototype.endpoint.rest;
 
-import com.ecommerce.prototype.application.domain.Payment;
+import com.ecommerce.prototype.application.domain.PaymentResponse;
 import com.ecommerce.prototype.application.usecase.GetPaymentUseCase;
 import com.ecommerce.prototype.application.usecase.ProcessPaymentUseCase;
 import com.ecommerce.prototype.application.usecase.exception.*;
@@ -36,7 +36,7 @@ public class PaymentController {
     @GetMapping("/payment/{paymentId}")
     public ResponseEntity<?> getPayment(@PathVariable Integer paymentId) {
         try {
-            Optional<Payment> payment = getPaymentUseCase.getPayment(paymentId);
+            Optional<PaymentResponse> payment = getPaymentUseCase.getPayment(paymentId);
             if (payment.isPresent()) {
                 return ResponseEntity.ok(payment.get());
             } else {

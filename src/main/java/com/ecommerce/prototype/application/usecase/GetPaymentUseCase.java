@@ -1,6 +1,6 @@
 package com.ecommerce.prototype.application.usecase;
 
-import com.ecommerce.prototype.application.domain.Payment;
+import com.ecommerce.prototype.application.domain.PaymentResponse;
 import com.ecommerce.prototype.application.usecase.repository.PaymentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ public class GetPaymentUseCase {
 
     private PaymentRepository paymentRepository;
 
-    public Optional<Payment> getPayment(Integer paymentId){
+    public Optional<PaymentResponse> getPayment(Integer paymentId){
 
         return  paymentRepository.getPayment(paymentId);
     }

@@ -9,6 +9,8 @@ import com.ecommerce.prototype.infrastructure.client.mappers.MapperUser;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
 import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.UserJPARepository;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import java.util.Optional;
 
@@ -17,6 +19,8 @@ import java.util.Optional;
 public class UserProvider implements UserRepository {
 
     private final UserJPARepository userJPARepository;
+    private static final Logger logger = LoggerFactory.getLogger(UserProvider.class);
+
 
     /**
      * Saves a user to the database.

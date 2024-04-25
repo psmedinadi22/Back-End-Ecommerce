@@ -117,8 +117,9 @@ public class OrderProvider implements OrderRepository {
                                     .orElseThrow(() -> new UserNoExistException("The user not found in database"));
 
         orderdb.setUser(user);
-        orderJPARepository.save(orderdb);
 
-        return order;
+        Orderdb orderSaved = orderJPARepository.save(orderdb);
+
+            return MapperOrder.mapToDomain(orderSaved, order.getCart(), order.getCard());
     }
 }
