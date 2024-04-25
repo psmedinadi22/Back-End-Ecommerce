@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -29,7 +30,6 @@ public class PayUProvider implements ExternalPlatformRepository {
 	private PayuConfig payuConfig;
 	private HttpClient client;
 	private static final Logger logger = LoggerFactory.getLogger(PayUProvider.class);
-
 
 	@Override
 	public Optional<PaymentResponse> doPayment(Order order) {
@@ -47,19 +47,32 @@ public class PayUProvider implements ExternalPlatformRepository {
 				var payuResponse = objectMapper.readValue(responseBody, PayUResponse.class);
 
 				// APPROVED, DECLINED, ERROR, PENDING
+				Date currentDate = new Date();
 
-				long timestamp = Long.parseLong(payuResponse.getTransactionResponse().getOperationDate());
-				Date date = new Date(timestamp);
+				if(!Objects.equals(payuResponse.getCode(), "SUCCESS")){
+					return Optional.of(PaymentResponse.builder()
+							        .withStatus("Payment error")
+							        .withExternalState(payuResponse.getCode())
+									.withError(payuResponse.getError())
+									.withCreationDate(currentDate)
+							.build()
+					);
+				} else {
+					long timestamp = Long.parseLong(payuResponse.getTransactionResponse().getOperationDate());
+					Date date = new Date(timestamp);
 
-				return Optional.of(PaymentResponse.builder()
-												  .withStatus("SUCCESS")
-						                          .withState(payuResponse.getTransactionResponse().getState().equals("APPROVED") ? "ENTREGAR_PRODUCTO" : "")
-												  .withExternalId(payuResponse.getTransactionResponse().getTransactionId())
-												  .withExternalState(payuResponse.getTransactionResponse().getState())
-												  .withCreationDate(date)
-												  .withMessage(payuResponse.getTransactionResponse().getResponseMessage())
-												  .withOrder(order)
-												  .build());
+					return Optional.of(PaymentResponse.builder()
+							.withStatus("Success")
+							.withState(payuResponse.getTransactionResponse().getState().equals("APPROVED") ? "Approved purchase" : "")
+							.withExternalId(payuResponse.getTransactionResponse().getTransactionId())
+							.withExternalState(payuResponse.getTransactionResponse().getState())
+							.withCreationDate(date)
+							.withMessage(payuResponse.getTransactionResponse().getResponseMessage())
+							.withOrder(order)
+							.build());
+				}
+
+
 
 			} catch (JsonProcessingException e) {
 				return Optional.of(buildResponseFromError(responseEntity.getStatusCode().toString(),

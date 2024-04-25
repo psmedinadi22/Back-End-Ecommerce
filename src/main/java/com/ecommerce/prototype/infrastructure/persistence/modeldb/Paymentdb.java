@@ -2,7 +2,7 @@ package com.ecommerce.prototype.infrastructure.persistence.modeldb;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.Date;
 
 @Getter
@@ -12,6 +12,7 @@ import java.util.Date;
 @Builder(setterPrefix = "with")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Paymentdb {
 
     @Id

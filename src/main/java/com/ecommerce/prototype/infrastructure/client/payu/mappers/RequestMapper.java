@@ -10,6 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 @AllArgsConstructor
 public final class RequestMapper {
@@ -35,11 +36,14 @@ public final class RequestMapper {
 	}
 
 	private static TransactionRequest buildTransaction(Order order, String apiKey, String paymentMethod, String merchantId, String accountId, String currency) {
-
+		String card;
+		if(Objects.equals(order.getCard().getName(), "REJECTED")){
+			card = "b2";
+		} else card = order.getCard().getTokenId();
 		return TransactionRequest.builder()
 								 .order(buildOrder(order, apiKey, merchantId, accountId, currency))
 								 .payer(buildPayer(order.getBuyer()))
-								 .creditCardTokenId(order.getCard().getTokenId())
+								 .creditCardTokenId(card)
 								 .type("AUTHORIZATION_AND_CAPTURE")
 								 .paymentMethod(paymentMethod)
 								 .paymentCountry("CO")

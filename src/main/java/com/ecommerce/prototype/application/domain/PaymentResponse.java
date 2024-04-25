@@ -1,5 +1,6 @@
 package com.ecommerce.prototype.application.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import java.util.Date;
 @Builder(setterPrefix = "with")
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PaymentResponse {
 
 	private String id;

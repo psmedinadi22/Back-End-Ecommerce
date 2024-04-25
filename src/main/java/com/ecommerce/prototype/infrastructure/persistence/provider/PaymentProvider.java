@@ -7,6 +7,7 @@ import com.ecommerce.prototype.application.usecase.repository.OrderRepository;
 import com.ecommerce.prototype.application.usecase.repository.PaymentRepository;
 import com.ecommerce.prototype.infrastructure.client.mappers.MapperUser;
 import com.ecommerce.prototype.infrastructure.persistence.modeldb.Paymentdb;
+import com.ecommerce.prototype.infrastructure.persistence.modeldb.Userdb;
 import com.ecommerce.prototype.infrastructure.persistence.provider.jparepository.PaymentJPARepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,16 +26,24 @@ public class PaymentProvider implements PaymentRepository {
     @Override
     public PaymentResponse save(PaymentResponse paymentResponse) {
 
+        Integer orderId = paymentResponse.getOrder() != null ? paymentResponse.getOrder().getOrderID() : null;
+
+        Userdb userModel = null;
+
+        if (paymentResponse.getOrder() != null && paymentResponse.getOrder().getBuyer() != null) {
+            userModel = MapperUser.toUserModel(paymentResponse.getOrder().getBuyer().toUser());
+        }
+
         var paymentdb = Paymentdb.builder()
                 .withExternalState(paymentResponse.getExternalState())
                 .withStatus(paymentResponse.getStatus())
                 .withState(paymentResponse.getState())
                 .withError(paymentResponse.getError())
                 .withMessage(paymentResponse.getMessage())
-                .withOrderId(paymentResponse.getOrder().getOrderID())
+                .withOrderId(orderId)
                 .withExternalId(paymentResponse.getExternalId())
                 .withCreationDate(paymentResponse.getCreationDate())
-                .withUser(MapperUser.toUserModel(paymentResponse.getOrder().getBuyer().toUser()))
+                .withUser(userModel)
                 .build();
 
         Paymentdb paymentdbSaved = paymentJPARepository.save(paymentdb);
